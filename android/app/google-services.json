@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1032345125359",
+    "project_id": "kode-core-22797",
+    "storage_bucket": "kode-core-22797.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032345125359:android:a9072f1eff1fd56407f61a",
+        "android_client_info": {
+          "package_name": "com.mobileapp.kode_core"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1032345125359-d7mcv9ll00g6g3hm9gesdbfdgfrbmae8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8tN8umk2B3ehpUjwxyzzjRGrLuyJKO9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1032345125359-d7mcv9ll00g6g3hm9gesdbfdgfrbmae8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
