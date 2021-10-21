@@ -564,13 +564,13 @@ class _HomeState extends State<Home> {
   }
 
   _notification() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
       'high_importance1_channel', // id
       'High Importance Notifications', // title
       'This channel is used for important notifications.', // description
       importance: Importance.max,
     );
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
 
     await flutterLocalNotificationsPlugin
