@@ -36,7 +36,6 @@ class _OtpState extends State<Otp> {
   Widget build(BuildContext context) {
     print("reg Data..." + widget.regData.userId.toString());
     print("reg Data...pageNAme..." + widget.pageName.toString());
-    
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,

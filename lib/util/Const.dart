@@ -30,4 +30,5 @@ class Consts {
   static String CRYPTOCURRENCY_TRANSACTION =
       APP_URL + "cryptocurrency-transactions";
   static String TERMS_CONDITIONS = APP_URL + "privacy-and-tnc";
+  static String LOGOUT = APP_URL + "logout";
 }

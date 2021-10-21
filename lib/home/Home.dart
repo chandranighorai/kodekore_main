@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/cryptocurrency/CryptoCurrency.dart';
 import 'package:kode_core/investmentplan/InvestmentList.dart';
@@ -9,6 +10,7 @@ import 'package:kode_core/util/Const.dart';
 import 'package:kode_core/util/Util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Navigation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
@@ -21,6 +23,51 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _notification();
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      if (message != null) {
+        Map data = message.data;
+        print(data['notification_type']);
+      }
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      print("Message..." + message.toString());
+      print("Message..." + notification.toString());
+      print("Message..." + android.toString());
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                "CHANNEL_ID",
+                "CHANNEL_NAME",
+                "CHANNEL_DESC",
+                //icon: android?.smallIcon,
+                // other properties...
+              ),
+            ));
+      }
+      print('A new onMessageOpenedApp event was published! ${message.data}');
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -514,5 +561,21 @@ class _HomeState extends State<Home> {
                     child: Text("Yes"))
               ],
             ));
+  }
+
+  _notification() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance1_channel', // id
+      'High Importance Notifications', // title
+      'This channel is used for important notifications.', // description
+      importance: Importance.max,
+    );
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 }

@@ -16,6 +16,8 @@ import 'package:kode_core/wallet/wallet.dart';
 import 'package:kode_core/notification/Notification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../util/Const.dart';
+
 class Navigation extends StatefulWidget {
   const Navigation({Key key}) : super(key: key);
 
@@ -338,8 +340,10 @@ class _NavigationState extends State<Navigation> {
   }
 
   _logOut() async {
+    print("logout Called....");
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
+      //var userId = pref.getString("userId");
       return showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -349,8 +353,24 @@ class _NavigationState extends State<Navigation> {
                       onPressed: () => Navigator.pop(context, false),
                       child: Text("No")),
                   TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        var formData = FormData.fromMap({
+                          "oAuth_json": json.encode({
+                            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+                            "aKey": "3EC5C12E6G34L34ED2E36A9"
+                          }),
+                          "jsonParam":
+                              json.encode({"user_id": userId.toString()})
+                        });
+                        var response =
+                            await dio.post(Consts.LOGOUT, data: formData);
+                        print("logout...otpStatus..." +
+                            pref.getString("otpStatus").toString());
+                        print(
+                            "logout...otpStatus..." + response.data.toString());
                         pref.clear();
+                        print("logout...otpStatus..." +
+                            pref.getString("otpStatus").toString());
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

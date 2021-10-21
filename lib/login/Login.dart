@@ -192,17 +192,19 @@ class _LoginState extends State<Login> {
           }),
         });
         var response = await dio.post(Consts.LOGIN, data: logFormData);
-        // print("loginData..." + response.data["respData"]["user_id"].toString());
+        print("loginData..." + response.data.toString());
         // print("loginData..." + response.data["success"].toString());
         if (response.data["success"] == 1) {
           RespData resp = new RespData();
           resp.userId = response.data["respData"]["user_id"];
-          resp.otpStatus = response.data["respData"]["otp_status"];
+          //resp.otpStatus = response.data["respData"]["otp_status"];
+          resp.otpStatus = response.data["respData"]["login_otp_status"];
           print("respOTP..." + resp.otpStatus.toString());
           setState(() {
             pref.setString(
-                "otpStatus", response.data["respData"]["otp_status"]);
+                "otpStatus", response.data["respData"]["login_otp_status"]);
           });
+          //if (response.data["respData"]["login_otp_status"] == 2) {
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -210,6 +212,7 @@ class _LoginState extends State<Login> {
                         regData: resp,
                         pageName: "logIn",
                       )));
+          //}
           setState(() {
             _btnClick = true;
           });

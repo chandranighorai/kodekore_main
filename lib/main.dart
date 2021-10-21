@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
   runApp(MyApp());
 }
 
@@ -59,7 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   //valueColor: AppColors.buttonColor,
                   ),
             )
-          : otpStatus.toString() == "1" || otpStatus.toString() == "null"
+          : otpStatus.toString() == "1" ||
+                  otpStatus.toString() == "null" ||
+                  otpStatus.toString() == "0"
               ? Login()
               : Home(),
     );
