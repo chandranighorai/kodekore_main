@@ -31,6 +31,7 @@ class _ItProjectTransactionState extends State<ItProjectTransaction> {
   var respData;
   Future<ItTransactionModel> _modelList;
   bool _load = false;
+  var response;
   // List itProjectlist = [
   //   {"date": "12/05/2021", "description": "IT Project Pay", "amt": 5000},
   //   {"date": "02/05/2021", "description": "IT Project Pay", "amt": 3000},
@@ -121,11 +122,15 @@ class _ItProjectTransactionState extends State<ItProjectTransaction> {
             // ),
 
             _load == true
-                ? ItTransactionTable(
-                    contextData: context,
-                    modelList: respData,
-                    currentSortColumn: _currentSortColumn,
-                    isAscending: _isAscending)
+                ? response.data["success"] == 0
+                    ? Center(
+                        child: Text(response.data["message"].toString()),
+                      )
+                    : ItTransactionTable(
+                        contextData: context,
+                        modelList: respData,
+                        currentSortColumn: _currentSortColumn,
+                        isAscending: _isAscending)
                 : Center(child: CircularProgressIndicator()),
           ],
         ),
@@ -144,14 +149,20 @@ class _ItProjectTransactionState extends State<ItProjectTransaction> {
         }),
         "jsonParam": json.encode({"user_id": userId.toString()})
       });
-      var response =
+      response =
           await dio.post(Consts.IT_PROJECT_BOUGHT_BY_USER, data: formData);
       print("response data..." + response.data.toString());
-      respData = response.data["respData"];
-      setState(() {
-        _load = true;
-      });
-      return ItTransactionModel.fromJson(response.data);
+      if (response.data["success"] == 0) {
+        setState(() {
+          _load = true;
+        });
+      } else {
+        respData = response.data["respData"];
+        setState(() {
+          _load = true;
+        });
+        return ItTransactionModel.fromJson(response.data);
+      }
     } on DioError catch (e) {
       print(e.toString());
       showCustomToast("No Network");

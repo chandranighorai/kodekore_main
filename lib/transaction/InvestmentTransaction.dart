@@ -30,6 +30,7 @@ class _InvestmentTransactionState extends State<InvestmentTransaction> {
   String userId;
   var respData;
   bool _load = false;
+  var response;
   // List investProjectlist = [
   //   {"date": "12/05/2021", "plan_name": "IT Project Pay", "amt": 5000},
   //   {"date": "02/05/2021", "plan_name": "IT Project Pay", "amt": 3000},
@@ -121,11 +122,15 @@ class _InvestmentTransactionState extends State<InvestmentTransaction> {
             // ),
             _load == false
                 ? Center(child: CircularProgressIndicator())
-                : InvestTransactionTable(
-                    contextData: context,
-                    modelList: respData,
-                    currentSortColumn: _currentSortColumn,
-                    isAscending: _isAscending)
+                : response.data["success"] == 0
+                    ? Center(
+                        child: Text(response.data["message"].toString()),
+                      )
+                    : InvestTransactionTable(
+                        contextData: context,
+                        modelList: respData,
+                        currentSortColumn: _currentSortColumn,
+                        isAscending: _isAscending)
           ],
         ),
       ),
@@ -145,15 +150,20 @@ class _InvestmentTransactionState extends State<InvestmentTransaction> {
         }),
         "jsonParam": json.encode({"user_id": userId.toString()})
       });
-      var response = await dio.post(Consts.INVESTMENT_PLANS_BOUGHT_BY_USER,
+      response = await dio.post(Consts.INVESTMENT_PLANS_BOUGHT_BY_USER,
           data: investmentData);
-
-      setState(() {
-        respData = response.data["respData"];
-        _load = true;
-      });
-      print("investmentDtaa..." + respData.toString());
-      return InvestmentTransactionModel.fromJson(response.data);
+      if (response.data["success"] == 0) {
+        setState(() {
+          _load = true;
+        });
+      } else {
+        setState(() {
+          respData = response.data["respData"];
+          _load = true;
+        });
+        print("investmentDtaa..." + respData.toString());
+        return InvestmentTransactionModel.fromJson(response.data);
+      }
     } on DioError catch (e) {
       print(e.toString());
       showCustomToast("No Network");

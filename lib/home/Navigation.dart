@@ -257,7 +257,7 @@ class _NavigationState extends State<Navigation> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                Notification1("Notifications"))),
+                                Notification1("Notifications",userId))),
                   ),
                   Divider(
                     color: Colors.grey,

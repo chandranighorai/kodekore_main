@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/home/Navigation.dart';
+import 'package:kode_core/notification/NotificationModel.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
@@ -8,14 +13,24 @@ import 'package:kode_core/wallet/wallet.dart';
 
 class Notification1 extends StatefulWidget {
   var title;
+  var userId;
   //const Notification1({Key key}) : super(key: key);
-  Notification1(this.title);
+  Notification1(this.title, this.userId);
   @override
   _Notification1State createState() => _Notification1State();
 }
 
 class _Notification1State extends State<Notification1> {
   GlobalKey<ScaffoldState> scaffFold = new GlobalKey<ScaffoldState>();
+  Future<NotificationModel> _notificationList;
+  var dio = Dio();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _notificationList = _getNotificationList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,39 +107,103 @@ class _Notification1State extends State<Notification1> {
                       boxShadow: [
                         BoxShadow(color: Colors.grey, blurRadius: 9.0)
                       ]),
-                  child: ListView.builder(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.width * 0.04,
-                      ),
-                      itemCount: 3,
-                      itemBuilder: (context, int index) {
-                        return NotificationList();
-                      }),
+                  child: FutureBuilder(
+                    initialData: null,
+                    future: _notificationList,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        var notiList = snapshot.data.respData;
+                        return notiList.length == 0
+                            ? Center(
+                                child: Text("No Notification Found"),
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.width * 0.04,
+                                ),
+                                itemCount: notiList.length,
+                                itemBuilder: (context, int index) {
+                                  NotificationList notificationList =
+                                      notiList[index];
+                                  return NotificationListShow(
+                                      notification: notificationList);
+                                });
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
                 ))
           ],
         ),
       ),
     );
   }
+
+  Future<NotificationModel> _getNotificationList() async {
+    try {
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({"user_id": widget.userId.toString()})
+      });
+      var response = await dio.post(Consts.NOTIFICATION, data: formData);
+      print("Notification Data..." + response.data.toString());
+      return NotificationModel.fromJson(response.data);
+    } on DioError catch (e) {
+      print(e.toString());
+      showCustomToast("No Network");
+    }
+  }
 }
 
-class NotificationList extends StatelessWidget {
-  const NotificationList({Key key}) : super(key: key);
+class NotificationListShow extends StatelessWidget {
+  NotificationList notification;
+  NotificationListShow({this.notification});
+  //NotificationList({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var date = notification.dtime.split(" ");
     return Padding(
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).size.width * 0.06,
         right: MediaQuery.of(context).size.width * 0.06,
-        top: MediaQuery.of(context).size.width * 0.02,
+        //top: MediaQuery.of(context).size.width * 0.02,
         bottom: MediaQuery.of(context).size.width * 0.02,
       ),
       child: Container(
-        child: Text("12/07/2021 2000 INR credit to wallet of investment",
-            style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.03,
-            )),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(date[0].toString(),
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.01,
+            ),
+            Text(notification.notificationTitle,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.02,
+            ),
+            Text(notification.notificationBody,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.02,
+            ),
+            Divider()
+          ],
+        ),
       ),
     );
   }

@@ -30,7 +30,7 @@ class _CryptoTableState extends State<CryptoTable> {
   @override
   Widget build(BuildContext context) {
     int _currentSortColumn = 0;
-    print("planList..." + widget.modelList.toString());
+    print("planList..." + widget.modelList.length.toString());
     return Positioned(
         top: MediaQuery.of(context).size.width * 0.52,
         bottom: MediaQuery.of(context).size.width * 0.02,
@@ -251,8 +251,12 @@ class _CryptoTableState extends State<CryptoTable> {
       var pp = {
         "date": dateShow,
         "cryptoId": modelList[i]["crypto_id"] + " " + modelList[i]["quantity"],
-        "tranType": modelList[i]["trans_type"],
-        "amount": modelList[i]["received_amount"]
+        "tranType": modelList[i]["trans_type"] == null
+            ? "null"
+            : modelList[i]["trans_type"],
+        "amount": modelList[i]["received_amount"] == null
+            ? "null"
+            : modelList[i]["received_amount"]
       };
 
       dateList.add(pp);

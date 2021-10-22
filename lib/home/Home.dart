@@ -23,49 +23,49 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      new FlutterLocalNotificationsPlugin();
+  //FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     new FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _notification();
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage message) {
-      if (message != null) {
-        Map data = message.data;
-        print(data['notification_type']);
-      }
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification notification = message.notification;
-      AndroidNotification android = message.notification?.android;
-      print("Message..." + message.toString());
-      print("Message..." + notification.toString());
-      print("Message..." + android.toString());
+    // _notification();
+    // FirebaseMessaging.instance
+    //     .getInitialMessage()
+    //     .then((RemoteMessage message) {
+    //   if (message != null) {
+    //     Map data = message.data;
+    //     print(data['notification_type']);
+    //   }
+    // });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   RemoteNotification notification = message.notification;
+    //   AndroidNotification android = message.notification?.android;
+    //   print("Message..." + message.toString());
+    //   print("Message..." + notification.toString());
+    //   print("Message..." + android.toString());
 
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                "CHANNEL_ID",
-                "CHANNEL_NAME",
-                "CHANNEL_DESC",
-                //icon: android?.smallIcon,
-                // other properties...
-              ),
-            ));
-      }
-      print('A new onMessageOpenedApp event was published! ${message.data}');
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-    });
+    //   if (notification != null && android != null) {
+    //     flutterLocalNotificationsPlugin.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //           android: AndroidNotificationDetails(
+    //             "CHANNEL_ID",
+    //             "CHANNEL_NAME",
+    //             "CHANNEL_DESC",
+    //             //icon: android?.smallIcon,
+    //             // other properties...
+    //           ),
+    //         ));
+    //   }
+    //   print('A new onMessageOpenedApp event was published! ${message.data}');
+    // });
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('A new onMessageOpenedApp event was published!');
+    // });
   }
 
   @override

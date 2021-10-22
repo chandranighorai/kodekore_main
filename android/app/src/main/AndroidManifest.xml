@@ -31,8 +31,8 @@
               android:resource="@drawable/splash"
               />
               <meta-data
-  android:name="com.google.firebase.messaging.default_notification_channel_id"
-  android:value="high_importance1_channel" />
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="high_importance1_channel" />
               <!-- <meta-data
     android:name="com.google.firebase.messaging.default_notification_icon"
     android:resource="@drawable/ic_stat_ic_notification" /> -->

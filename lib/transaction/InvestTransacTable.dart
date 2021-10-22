@@ -225,8 +225,12 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
       var dateShow = date[0];
       var pp = {
         "date": dateShow,
-        "plan": modelList[i]["plan_title"],
-        "amount": modelList[i]["inv_amount"],
+        "plan": modelList[i]["plan_title"] == null
+            ? "null"
+            : modelList[i]["plan_title"],
+        "amount": modelList[i]["inv_amount"] == null
+            ? "null"
+            : modelList[i]["inv_amount"],
       };
       dateList.add(pp);
     }

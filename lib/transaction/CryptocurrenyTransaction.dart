@@ -37,6 +37,7 @@ class _CryptocurrencyTransactionState extends State<CryptocurrencyTransaction> {
   // ];
   Future<CryptoTransactionModel> _cryptoCurrencyList;
   var dio = Dio();
+  var response;
   String userId;
   var respData;
   bool _load = false;
@@ -120,11 +121,15 @@ class _CryptocurrencyTransactionState extends State<CryptocurrencyTransaction> {
             //cryptoCurrencyTransactionList(context, cryptoCurrencylist),
             _load == false
                 ? Center(child: CircularProgressIndicator())
-                : CryptoTable(
-                    contextData: context,
-                    modelList: respData,
-                    currentSortColumn: _currentSortColumn,
-                    isAscending: _isAscending),
+                : response.data["success"] == 0
+                    ? Center(
+                        child: Text(response.data["message"].toString()),
+                      )
+                    : CryptoTable(
+                        contextData: context,
+                        modelList: respData,
+                        currentSortColumn: _currentSortColumn,
+                        isAscending: _isAscending),
           ],
         ),
       ),
@@ -142,14 +147,20 @@ class _CryptocurrencyTransactionState extends State<CryptocurrencyTransaction> {
         }),
         "jsonParam": json.encode({"user_id": userId, "crypto_id": "bitcoin"})
       });
-      var response =
+      response =
           await dio.post(Consts.CRYPTOCURRENCY_TRANSACTION, data: formData);
-      print("response body..." + response.data.toString());
-      respData = response.data["respData"];
-      setState(() {
-        _load = true;
-      });
-      return CryptoTransactionModel.fromJson(response.data);
+      print("response body...in crypto..." + response.data.toString());
+      if (response.data["success"] == 0) {
+        setState(() {
+          _load = true;
+        });
+      } else {
+        respData = response.data["respData"];
+        setState(() {
+          _load = true;
+        });
+        return CryptoTransactionModel.fromJson(response.data);
+      }
     } on DioError catch (e) {
       print(e.toString());
     }
