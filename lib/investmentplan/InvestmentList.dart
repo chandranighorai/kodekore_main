@@ -86,6 +86,8 @@ class _InvestmentListState extends State<InvestmentList> {
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         var investmentDataList = snapshot.data.respData;
+                        print(
+                            "responseData..." + investmentDataList.toString());
                         return investmentDataList.length == 0
                             ? Center(
                                 child: Container(child: Text("No Plans yet")))

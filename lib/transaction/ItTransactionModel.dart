@@ -40,6 +40,7 @@ class ItTransaction {
   String paymentStatus;
   String dtime;
   String paymentMode;
+  String filePath;
 
   ItTransaction(
       {this.userId,
@@ -53,7 +54,8 @@ class ItTransaction {
       this.applicationStatus,
       this.paymentStatus,
       this.dtime,
-      this.paymentMode});
+      this.paymentMode,
+      this.filePath});
 
   ItTransaction.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -64,10 +66,11 @@ class ItTransaction {
     userPhone = json['user_phone'];
     projectAmount = json['project_amount'];
     receivedAmount = json['received_amount'];
-    applicationStatus = json['application_status'];
-    paymentStatus = json['payment_status'];
+    applicationStatus = json['application_status'].toString();
+    paymentStatus = json['payment_status'].toString();
     dtime = json['dtime'];
     paymentMode = json['payment_mode'];
+    filePath = json['filepath'];
   }
 
   Map<String, dynamic> toJson() {
@@ -84,6 +87,8 @@ class ItTransaction {
     data['payment_status'] = this.paymentStatus;
     data['dtime'] = this.dtime;
     data['payment_mode'] = this.paymentMode;
+    data['filepath'] = this.filePath;
+
     return data;
   }
 }

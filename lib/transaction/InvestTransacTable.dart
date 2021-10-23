@@ -111,6 +111,15 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                       fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.038),
+                                )),
+                                DataColumn(
+                                    label: Text(
+                                  "Action",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.038),
                                 ))
                               ],
                               // rows: const <DataRow>[
@@ -157,6 +166,16 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                         items["amount"] + " CR",
                                         style: TextStyle(color: Colors.white),
                                       )),
+                                      DataCell(
+                                        Icon(
+                                          Icons.download_sharp,
+                                          color: Colors.white,
+                                        ),
+                                        //     onTap: () {
+                                        //   print("plan Name...." +
+                                        //       items["plan"].toString());
+                                        // }
+                                      ),
                                     ]);
                               }).toList(),
                               // List<DataRow>.generate(

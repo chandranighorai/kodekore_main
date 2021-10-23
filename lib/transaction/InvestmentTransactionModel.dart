@@ -43,6 +43,7 @@ class InvestmentTranModel {
   String paymentStatus;
   String dtime;
   String paymentMode;
+  String filePath;
 
   InvestmentTranModel(
       {this.invRowId,
@@ -56,7 +57,8 @@ class InvestmentTranModel {
       this.applicationStatus,
       this.paymentStatus,
       this.dtime,
-      this.paymentMode});
+      this.paymentMode,
+      this.filePath});
 
   InvestmentTranModel.fromJson(Map<String, dynamic> json) {
     invRowId = json['inv_row_id'];
@@ -67,10 +69,11 @@ class InvestmentTranModel {
     userEmail = json['user_email'];
     userPhone = json['user_phone'];
     invAmount = json['inv_amount'];
-    applicationStatus = json['application_status'];
-    paymentStatus = json['payment_status'];
+    applicationStatus = json['application_status'].toString();
+    paymentStatus = json['payment_status'].toString();
     dtime = json['dtime'];
     paymentMode = json['payment_mode'];
+    filePath = json['filepath'];
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +90,8 @@ class InvestmentTranModel {
     data['payment_status'] = this.paymentStatus;
     data['dtime'] = this.dtime;
     data['payment_mode'] = this.paymentMode;
+    data['filepath'] = this.filePath;
+
     //print("Data..." + data.toString());
     return data;
   }

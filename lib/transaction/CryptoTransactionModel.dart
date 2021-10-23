@@ -38,6 +38,7 @@ class RespData {
   String paymentMode;
   String dtime;
   String transType;
+  String filepath;
 
   RespData(
       {this.cryptoBuyid,
@@ -49,7 +50,8 @@ class RespData {
       this.paymentStatus,
       this.paymentMode,
       this.dtime,
-      this.transType});
+      this.transType,
+      this.filepath});
 
   RespData.fromJson(Map<String, dynamic> json) {
     cryptoBuyid = json['crypto_buyid'];
@@ -57,11 +59,12 @@ class RespData {
     cryptoId = json['crypto_id'];
     receivedAmount = json['received_amount'];
     quantity = json['quantity'];
-    applicationStatus = json['application_status'];
-    paymentStatus = json['payment_status'];
+    applicationStatus = json['application_status'].toString();
+    paymentStatus = json['payment_status'].toString();
     paymentMode = json['payment_mode'];
     dtime = json['dtime'];
     transType = json['trans_type'];
+    filepath = json['filepath'];
   }
 
   Map<String, dynamic> toJson() {
@@ -76,6 +79,7 @@ class RespData {
     data['payment_mode'] = this.paymentMode;
     data['dtime'] = this.dtime;
     data['trans_type'] = this.transType;
+    data['filepath'] = this.filepath;
     return data;
   }
 }

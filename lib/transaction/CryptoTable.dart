@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kode_core/cryptocurrency/CryptoCurrencyModel.dart';
 
 import '../util/AppColors.dart';
 
@@ -19,6 +20,7 @@ class CryptoTable extends StatefulWidget {
 class _CryptoTableState extends State<CryptoTable> {
   bool _isAscending;
   List dateList = [];
+  RespData data;
   @override
   void initState() {
     // TODO: implement initState
@@ -124,6 +126,15 @@ class _CryptoTableState extends State<CryptoTable> {
                                       fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.04),
+                                )),
+                                DataColumn(
+                                    label: Text(
+                                  "Action",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04),
                                 ))
                               ],
                               // rows: const <DataRow>[
@@ -178,6 +189,10 @@ class _CryptoTableState extends State<CryptoTable> {
                                       DataCell(Text(
                                         items["amount"] + " CR",
                                         style: TextStyle(color: Colors.white),
+                                      )),
+                                      DataCell(Icon(
+                                        Icons.download_sharp,
+                                        color: Colors.white,
                                       )),
                                     ]);
                               }).toList(),

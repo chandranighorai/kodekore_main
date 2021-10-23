@@ -549,13 +549,17 @@ class _WalletState extends State<Wallet> {
                                             MediaQuery.of(context).size.width *
                                                 0.05,
                                       ),
-                                      child: Row(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2.8,
+                                            // width: MediaQuery.of(context)
+                                            //         .size
+                                            //         .width /
+                                            //     2.8,
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -587,37 +591,111 @@ class _WalletState extends State<Wallet> {
                                                   hintText: "Enter Amount"),
                                             ),
                                           ),
-                                          Spacer(),
-                                          InkWell(
-                                            onTap: () {
-                                              _redeemRequest();
-                                            },
-                                            child: Container(
-                                                padding: EdgeInsets.only(
-                                                  top: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                  bottom: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                  left: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                  right: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                ),
-                                                color: AppColors.buttonColor,
-                                                child: Text(
-                                                  "Redeem Request",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.03,
+                                          ),
+                                          //Spacer(),
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  bool validation =
+                                                      _fieldCheck();
+                                                  print("validation..." +
+                                                      validation.toString());
+                                                  if (validation) {
+                                                    _redeemRequest();
+                                                  }
+                                                },
+                                                child: Container(
+                                                    alignment: Alignment.center,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            3,
+                                                    padding: EdgeInsets.only(
+                                                      top:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      left:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      right:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                    ),
+                                                    color:
+                                                        AppColors.buttonColor,
+                                                    child: Text(
+                                                      "Redeem",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )),
+                                              ),
+                                              Spacer(),
+                                              InkWell(
+                                                onTap: () {
+                                                  bool validation =
+                                                      _fieldCheck();
+                                                  if (validation) {
+                                                    _withdrawal();
+                                                  }
+                                                },
+                                                child: Container(
+                                                    alignment: Alignment.center,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            3,
+                                                    padding: EdgeInsets.only(
+                                                      top:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      left:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                      right:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                    ),
+                                                    color:
+                                                        AppColors.buttonColor,
+                                                    child: Text(
+                                                      "Withdrawal",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )),
+                                              ),
+                                            ],
                                           )
                                         ],
                                       ),
@@ -673,26 +751,23 @@ class _WalletState extends State<Wallet> {
   _redeemRequest() async {
     print("amountText..." + userId);
     try {
-      if (_amountText.text.trim().length == 0) {
-        showCustomToast("Field should not empty");
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode(
+            {"user_id": userId, "amount": _amountText.text.trim().toString()})
+      });
+      var response = await dio.post(Consts.REDEEM_REQUEST, data: formData);
+      print("Response Body..." + response.data.toString());
+      if (response.data["success"] == 1) {
+        showCustomToast(response.data["message"]);
+        _amountText.text = "";
       } else {
-        var formData = FormData.fromMap({
-          "oAuth_json": json.encode({
-            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-            "aKey": "3EC5C12E6G34L34ED2E36A9"
-          }),
-          "jsonParam": json.encode(
-              {"user_id": userId, "amount": _amountText.text.trim().toString()})
-        });
-        var response = await dio.post(Consts.REDEEM_REQUEST, data: formData);
-        print("Response Body..." + response.data.toString());
-        if (response.data["success"] == 1) {
-          showCustomToast(response.data["message"]);
-          _amountText.text = "";
-        } else {
-          showCustomToast(response.data["message"]["valid_fields"]);
-        }
+        showCustomToast(response.data["message"]["valid_fields"]);
       }
+      // }
     } on DioError catch (e) {
       print(e.toString());
       print("No Network");
@@ -733,6 +808,40 @@ class _WalletState extends State<Wallet> {
     } on DioError catch (e) {
       print(e.toString());
       print("No Network");
+    }
+  }
+
+  _fieldCheck() {
+    if (_amountText.text.trim().length == 0) {
+      showCustomToast("Field should not empty");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  _withdrawal() async {
+    try {
+      var formdataWithdraw = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({
+          "user_id": userId,
+          // "crypto_id": "bitcoin",
+          // "quantity": _bitCoinText.text.trim().toString(),
+          "amount": totalAmount.toString()
+        })
+      });
+      var response = await dio.post(Consts.WITHDRAWAL, data: formdataWithdraw);
+      print("withdraw...." + response.data.toString());
+      showCustomToast(response.data["message"].toString());
+      _amountText.text = "";
+      // setState(() {
+      // });
+    } on DioError catch (e) {
+      print(e.toString());
     }
   }
 }

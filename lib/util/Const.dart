@@ -32,4 +32,5 @@ class Consts {
   static String TERMS_CONDITIONS = APP_URL + "privacy-and-tnc";
   static String LOGOUT = APP_URL + "logout";
   static String NOTIFICATION = APP_URL + "notification-list";
+  static String WITHDRAWAL = APP_URL + "withdrawal-request";
 }

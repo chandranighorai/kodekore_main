@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/transaction/ItTransactionModel.dart';
 import 'package:kode_core/util/AppColors.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:file_utils/file_utils.dart';
 
 class ItTransactionTable extends StatefulWidget {
   BuildContext contextData;
@@ -24,12 +30,21 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
   bool _isAscending = true;
   List dateList = [];
   bool dataLoad;
+  var pdfUrl = "";
+  var path = "No data";
+  String dirLoc = "";
+  var platformPermission = "Unknown";
+  var _onPressed;
+  Directory externalDir;
+  bool downloading = false;
+  var progress = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     dataLoad = false;
     _gettingList(widget.modelList);
+    _downloadFile();
   }
 
   @override
@@ -104,6 +119,14 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width *
                                       0.038),
+                            )),
+                            DataColumn(
+                                label: Text(
+                              "Action",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width *
+                                      0.038),
                             ))
                           ],
                           // rows: const <DataRow>[
@@ -148,6 +171,17 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                     items["amount"] + " CR",
                                     style: TextStyle(color: Colors.white),
                                   )),
+                                  DataCell(
+                                      Icon(
+                                        Icons.download_sharp,
+                                        color: Colors.white,
+                                      ), onTap: () {
+                                    print("File path...." +
+                                        items["path"].toString());
+                                    pdfUrl = items["path"].toString();
+                                    _pdfDownload();
+                                    //_onPressed;
+                                  }),
                                 ]);
                           }).toList(),
                         ))
@@ -337,7 +371,7 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
 
   _gettingList(var modelList) {
     print("ModelList..." + modelList.toString());
-    print("ModelList..." + modelList[0]["dtime"].toString());
+    print("ModelList..." + modelList[0]["filepath"].toString());
 
     for (int i = 0; i < modelList.length; i++) {
       // var date = modelList[i]["dtime"] == null
@@ -354,7 +388,8 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
             : modelList[i]["project_title"],
         "amount": modelList[i]["project_amount"] == null
             ? "null"
-            : modelList[i]["project_amount"]
+            : modelList[i]["project_amount"],
+        "path": modelList[i]["filepath"]
       };
 
       dateList.add(pp);
@@ -362,6 +397,62 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
     }
     setState(() {
       dataLoad = true;
+    });
+  }
+
+  _downloadFile() async {
+    Dio dio = Dio();
+
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      if (Platform.isAndroid) {
+        dirLoc = "/sdcard/";
+      } else {
+        dirLoc = (await getApplicationDocumentsDirectory()).path;
+      }
+      // try {
+      //   FileUtils.mkdir([dirLoc]);
+      //   await dio.download(pdfUrl, dirLoc + "jkjk" + ".pdf",
+      //       onReceiveProgress: (receivedBytes, totalBytes) {
+      //     print("here1...");
+      //     setState(() {
+      //       downloading = true;
+      //       progress =
+      //           ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+      //       print("olololo...." + progress);
+      //     });
+      //   });
+      // } catch (e) {
+      //   print(e.toString());
+      // }
+      setState(() {
+        downloading = false;
+        progress = "Progress Complete";
+        path = dirLoc + "jkjk" + ".pdf";
+      });
+    } else {
+      setState(() {
+        progress = "Permission Denied!";
+        _onPressed = () {
+          _downloadFile();
+        };
+      });
+    }
+  }
+
+  _pdfDownload() async {
+    var dio = Dio();
+    var dd = pdfUrl.split("/");
+    print("DD..." + dd[dd.length - 1]);
+    dio.download(pdfUrl, dirLoc + dd[dd.length - 1],
+        onReceiveProgress: (receivedBytes, totalBytes) {
+      print("here1...");
+      setState(() {
+        downloading = true;
+        progress =
+            ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+        print("olololo...." + progress);
+      });
     });
   }
 }
