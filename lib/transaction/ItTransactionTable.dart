@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/transaction/ItTransactionModel.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:path_provider/path_provider.dart';
@@ -35,7 +35,7 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
   String dirLoc = "";
   var platformPermission = "Unknown";
   var _onPressed;
-  Directory externalDir;
+  // Directory externalDir;
   bool downloading = false;
   var progress = "";
   @override
@@ -406,7 +406,8 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
     final status = await Permission.storage.request();
     if (status.isGranted) {
       if (Platform.isAndroid) {
-        dirLoc = "/sdcard/";
+        //dirLoc = "/storage/emulated/0/KodeCore/";
+        dirLoc = "/storage/emulated/0/Download/";
       } else {
         dirLoc = (await getApplicationDocumentsDirectory()).path;
       }
@@ -452,7 +453,13 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
         progress =
             ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
         print("olololo...." + progress);
+        print("olololo...." + dirLoc + dd[dd.length - 1].toString());
       });
+      if (progress.toString() == "100%") {
+        print("progress..." + progress.toString());
+        showCustomToast(
+            "File Saved in " + dirLoc + dd[dd.length - 1].toString());
+      }
     });
   }
 }

@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/cryptocurrency/CryptoCurrencyModel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../util/AppColors.dart';
 
@@ -20,12 +26,22 @@ class CryptoTable extends StatefulWidget {
 class _CryptoTableState extends State<CryptoTable> {
   bool _isAscending;
   List dateList = [];
+  var pdfUrl = "";
+  var path = "No data";
+  String dirLoc = "";
+  var platformPermission = "Unknown";
+  var _onPressed;
+  // Directory externalDir;
+  bool downloading = false;
+  var progress = "";
   RespData data;
+  var dir;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _isAscending = widget.isAscending;
+    _downloadFile();
     _gettingList(widget.modelList);
   }
 
@@ -190,10 +206,16 @@ class _CryptoTableState extends State<CryptoTable> {
                                         items["amount"] + " CR",
                                         style: TextStyle(color: Colors.white),
                                       )),
-                                      DataCell(Icon(
-                                        Icons.download_sharp,
-                                        color: Colors.white,
-                                      )),
+                                      DataCell(
+                                          Icon(
+                                            Icons.download_sharp,
+                                            color: Colors.white,
+                                          ), onTap: () {
+                                        print("plan Name...." +
+                                            items["plan"].toString());
+                                        pdfUrl = items["path"].toString();
+                                        _pdfDownload();
+                                      }),
                                     ]);
                               }).toList(),
                               // List<DataRow>.generate(
@@ -271,11 +293,80 @@ class _CryptoTableState extends State<CryptoTable> {
             : modelList[i]["trans_type"],
         "amount": modelList[i]["received_amount"] == null
             ? "null"
-            : modelList[i]["received_amount"]
+            : modelList[i]["received_amount"],
+        "path": modelList[i]["filepath"]
       };
 
       dateList.add(pp);
       print("DataList..." + dateList.toString());
     }
+  }
+
+  _downloadFile() async {
+    Dio dio = Dio();
+
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      if (Platform.isAndroid) {
+        //dirLoc = "/sdcard/";
+        dirLoc = "/storage/emulated/0/Download/";
+        //dirLoc = "/storage/emulated/0/KodeCore/";
+        //dir = await getApplicationDocumentsDirectory();
+      } else {
+        dirLoc = (await getApplicationDocumentsDirectory()).path;
+      }
+      // try {
+      //   FileUtils.mkdir([dirLoc]);
+      //   await dio.download(pdfUrl, dirLoc + "jkjk" + ".pdf",
+      //       onReceiveProgress: (receivedBytes, totalBytes) {
+      //     print("here1...");
+      //     setState(() {
+      //       downloading = true;
+      //       progress =
+      //           ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+      //       print("olololo...." + progress);
+      //     });
+      //   });
+      // } catch (e) {
+      //   print(e.toString());
+      // }
+      setState(() {
+        downloading = false;
+        progress = "Progress Complete";
+        path = dirLoc + "jkjk" + ".pdf";
+      });
+    } else {
+      setState(() {
+        progress = "Permission Denied!";
+        _onPressed = () {
+          _downloadFile();
+        };
+      });
+    }
+  }
+
+  _pdfDownload() async {
+    var dio = Dio();
+    var dd = pdfUrl.split("/");
+    print("DD..." + dd[dd.length - 1]);
+    print("DD..." + dirLoc.toString());
+
+    //dio.download(pdfUrl, dirLoc + dd[dd.length - 1],
+    dio.download(pdfUrl, dirLoc + dd[dd.length - 1],
+        onReceiveProgress: (receivedBytes, totalBytes) {
+      print("here1...");
+      setState(() {
+        downloading = true;
+        progress =
+            ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+        print("olololo...." + progress);
+        print("olololo...." + dirLoc + dd[dd.length - 1].toString());
+      });
+      if (progress.toString() == "100%") {
+        print("progress..." + progress.toString());
+        showCustomToast(
+            "File Saved in " + dirLoc + dd[dd.length - 1].toString());
+      }
+    });
   }
 }

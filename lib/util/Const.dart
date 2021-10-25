@@ -33,4 +33,5 @@ class Consts {
   static String LOGOUT = APP_URL + "logout";
   static String NOTIFICATION = APP_URL + "notification-list";
   static String WITHDRAWAL = APP_URL + "withdrawal-request";
+  static String PAYMENT_KEYS = APP_URL + "payment-keys";
 }
