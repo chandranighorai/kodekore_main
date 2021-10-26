@@ -133,6 +133,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/cryptocurrency/CryptoCurrencyModel.dart';
 import 'package:kode_core/util/AppColors.dart';
+import 'package:flutter/services.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Consts/AppConsts.dart';
 import '../util/Const.dart';
@@ -153,6 +156,11 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
   var dio = Dio();
   String amountText;
   bool buyEnable;
+  static const platform = const MethodChannel("razorpay_flutter");
+  Razorpay _razorpay;
+  var userPhone, userEmail;
+  String paymentId = "null";
+  String paymentStatus = "null";
   @override
   void initState() {
     // TODO: implement initState
@@ -160,6 +168,16 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     quantitytext = new TextEditingController();
     amountText = "0";
     buyEnable = true;
+    _razorpay = new Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlepaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlepaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
   }
 
   @override
@@ -228,9 +246,13 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
                             fontSize:
                                 MediaQuery.of(context).size.width * 0.038)),
                     onChanged: (value) {
-                      print("amount..." + value.toString());
-                      _totalAmount(
-                          value, widget.cryptoDataList.currentPriceInr);
+                      print("amount..." + value.length.toString());
+                      if (value.length == 0) {
+                        amountText = "0.0";
+                      } else {
+                        _totalAmount(
+                            value, widget.cryptoDataList.currentPriceInr);
+                      }
                     },
                   ),
                 ),
@@ -245,10 +267,11 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
                 buyEnable == true
                     ? InkWell(
                         onTap: () {
-                          setState(() {
-                            buyEnable = false;
-                          });
-                          _buyNow();
+                          // setState(() {
+                          //   buyEnable = false;
+                          // });
+                          _keyGenerate();
+                          //_buyNow();
                         },
                         child: Container(
                             padding: EdgeInsets.all(
@@ -292,37 +315,124 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     // print("USERId..." + quantitytext.text.trim().toString());
     // print("USERId..." + amountText);
     try {
-      if (quantitytext.text.trim().length == 0) {
-        showCustomToast("Enter Quantity");
+      // if (quantitytext.text.trim().length == 0) {
+      //   showCustomToast("Enter Quantity");
+      //   // setState(() {
+      //   //   buyEnable = true;
+      //   // });
+      // } else {
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({
+          "user_id": widget.userId.toString(),
+          "crypto_id": widget.cryptoDataList.cryptoId,
+          "quantity": quantitytext.text.trim().toString(),
+          "amount": amountText.toString(),
+          "payment_status": paymentStatus,
+          "payment_id": paymentId
+        })
+      });
+      var response = await dio.post(Consts.BUY_CRYPTOCURRENCY, data: formData);
+      print("response data..." + response.data.toString());
+      if (response.data["success"] == 1) {
         setState(() {
           buyEnable = true;
+          quantitytext.text = "";
+          amountText = "0";
         });
+      }
+      showCustomToast(response.data["message"].toString());
+      //}
+      setState(() {
+        buyEnable = true;
+      });
+    } on DioError catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _handlepaymentSuccess(PaymentSuccessResponse response) {
+    print("Success..." + response.paymentId.toString());
+    setState(() {
+      paymentId = response.paymentId.toString();
+      paymentStatus = "1";
+      _buyNow();
+    });
+  }
+
+  _handlepaymentError(PaymentFailureResponse response) {
+    print("Failure..." + response.code.toString());
+    print("Failure..." + response.message.toString());
+    setState(() {
+      buyEnable = true;
+    });
+  }
+
+  _handleExternalWallet(ExternalWalletResponse response) {
+    print("Wallet..." + response.walletName.toString());
+  }
+
+  _keyGenerate() async {
+    print("Razorpay..." + _razorpay.toString());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userPhone = prefs.getString("phone");
+    userEmail = prefs.getString("email");
+    try {
+      if (quantitytext.text.trim().length == 0) {
+        showCustomToast("Enter Quantity");
+        // setState(() {
+        //   buyEnable = true;
+        // });
       } else {
-        var formData = FormData.fromMap({
+        setState(() {
+          buyEnable = false;
+        });
+        var keyData = FormData.fromMap({
           "oAuth_json": json.encode({
             "sKey": "dfdbayYfd4566541cvxcT34#gt55",
             "aKey": "3EC5C12E6G34L34ED2E36A9"
           }),
-          "jsonParam": json.encode({
-            "user_id": widget.userId.toString(),
-            "crypto_id": widget.cryptoDataList.cryptoId,
-            "quantity": quantitytext.text.trim().toString(),
-            "amount": amountText.toString()
-          })
+          "jsonParam": json.encode({})
         });
-        var response =
-            await dio.post(Consts.BUY_CRYPTOCURRENCY, data: formData);
-        print("response data..." + response.data.toString());
-        if (response.data["success"] == 1) {
-          setState(() {
-            buyEnable = true;
-            quantitytext.text = "";
-            amountText = "0";
-          });
+        var responseData = await dio.post(Consts.PAYMENT_KEYS, data: keyData);
+        print("responseData in crypto..." + responseData.data.toString());
+        if (responseData.data["success"] == 1) {
+          openCheckOut(responseData.data["respData"]["Key_Id"].toString());
         }
-        showCustomToast(response.data["message"].toString());
       }
     } on DioError catch (e) {
+      print(e.toString());
+    }
+  }
+
+  openCheckOut(String keyString) async {
+    print("crpytoName..." + amountText.toString());
+    var price = amountText.split(".");
+    print("crpytoName..." + price.toString());
+    print("crpytoName..." +
+        (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString());
+
+    var options = {
+      'key': keyString,
+      //'amount': (double.parse(amountText.toString()) * 100).toString(),
+      'amount':
+          (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString(),
+      'name': widget.cryptoDataList.cryptoName.toString(),
+      'prefill': {
+        'contact': userPhone.toString(),
+        'email': userEmail.toString()
+      },
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+    print("crpytoName..." + options.toString());
+    try {
+      _razorpay.open(options);
+    } catch (e) {
       print(e.toString());
     }
   }

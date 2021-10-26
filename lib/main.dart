@@ -99,8 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
       print('A new onMessageOpenedApp event was published! ${message.data}');
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      print('A new onMessageOpenedApp event was published!' +
+          message.data.toString());
     });
+
     _getDetails();
   }
 

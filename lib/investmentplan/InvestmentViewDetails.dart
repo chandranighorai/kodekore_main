@@ -7,6 +7,9 @@ import 'package:kode_core/home/Navigation.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
+import 'package:flutter/services.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InvestmentViewDetails extends StatefulWidget {
   String invPlanId, invPlanTitle, invPlanDesc, invPlanAmount, userId;
@@ -28,11 +31,27 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   bool pageLoad;
   var dio = Dio();
   var responseData;
+  var userPhone;
+  var userEmail;
+  static const platform = const MethodChannel("razorpay_flutter");
+  Razorpay _razorpay;
+  String paymentStatus = "null";
+  String paymentId = "null";
   @override
   void initState() {
     // TODO: implement initState
     amount = new TextEditingController();
     super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
   }
 
   @override
@@ -180,22 +199,24 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                             color: AppColors.buttonColor,
                             alignment: Alignment.center,
                             child: TextButton(
-                              child: Text(
-                                "Invest Now",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.05),
-                                textAlign: TextAlign.center,
-                              ),
-                              onPressed: () => {
-                                setState(() {
-                                  _investNow();
-                                }),
-                              },
-                            )),
+                                child: Text(
+                                  "Invest Now",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  textAlign: TextAlign.center,
+                                ),
+                                onPressed: () =>
+                                    //{
+                                    //setState(() {
+                                    //_investNow();
+                                    _keyGenerate()
+                                //}),
+                                //},
+                                )),
                       )
                     ],
                   ),
@@ -271,7 +292,9 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
           "jsonParam": json.encode({
             "user_id": widget.userId,
             "inv_plan_id": widget.invPlanId,
-            "inv_amount": amount.text.toString()
+            "inv_amount": amount.text.toString(),
+            "payment_status": paymentStatus,
+            "payment_id": paymentId
           })
         });
         var invest =
@@ -284,6 +307,75 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     } on DioError catch (e) {
       print(e.toString());
       showCustomToast("No Network");
+    }
+  }
+
+  _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print("Success..." + response.paymentId.toString());
+    setState(() {
+      paymentId = response.paymentId;
+      paymentStatus = "1";
+      _investNow();
+    });
+    showCustomToast("Success: " + response.paymentId.toString());
+  }
+
+  _handlePaymentError(PaymentFailureResponse response) {
+    print("Failure..." + response.code.toString());
+    print("Failure..." + response.message.toString());
+    showCustomToast("Failure: " + response.message.toString());
+  }
+
+  _handleExternalWallet(ExternalWalletResponse response) {
+    print("Wallet..." + response.walletName.toString());
+    showCustomToast("Wallet: " + response.walletName.toString());
+  }
+
+  _keyGenerate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userPhone = prefs.getString("phone");
+    userEmail = prefs.getString("email");
+
+    try {
+      if (amount.text.length == 0) {
+        showCustomToast("Enter amount");
+      } else {
+        var keydata = FormData.fromMap({
+          "oAuth_json": json.encode({
+            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+            "aKey": "3EC5C12E6G34L34ED2E36A9"
+          }),
+          "jsonParam": json.encode({})
+        });
+        var keyResponse = await dio.post(Consts.PAYMENT_KEYS, data: keydata);
+        print("Keydata..." + keyResponse.data.toString());
+        if (keyResponse.data["success"] == 1) {
+          openCheckOut(keyResponse.data["respData"]["Key_Id"].toString());
+        }
+      }
+    } on DioError catch (e) {
+      print(e.toString());
+    }
+  }
+
+  openCheckOut(String keyString) async {
+    print("KeyString..." + keyString.toString());
+    var options = {
+      'key': keyString,
+      'amount': (double.parse(amount.text.toString()) * 100).toString(),
+      'name': widget.invPlanTitle.toString(),
+      'prefill': {
+        'contact': userPhone.toString(),
+        'email': userEmail.toString()
+      },
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
     }
   }
 }
