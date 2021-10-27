@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +23,13 @@ class _WalletState extends State<Wallet> {
   var dio = Dio();
   var responseData;
   var cryptoData;
+  var bitCoinPrice;
   bool _load = false;
   String userId;
   double totalAmount;
   TextEditingController _amountText, _bitCoinText;
+  List pp;
+  Timer _bitTimer;
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +41,16 @@ class _WalletState extends State<Wallet> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _bitTimer.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _bitTimer = Timer(Duration(seconds: 5), () {
+      _getWallet();
+    });
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       key: scaffFoldState,
@@ -149,15 +162,36 @@ class _WalletState extends State<Wallet> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          "bitcoin".toUpperCase(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.bgColor,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.045),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "bitcoin".toUpperCase(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.bgColor,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.045),
+                                            ),
+                                            Spacer(),
+                                            pp.length == 0
+                                                ? SizedBox()
+                                                : Text(
+                                                    "${pp[0]["current_price_inr"]} INR",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            AppColors.bgColor,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.045),
+                                                  )
+                                          ],
                                         ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
@@ -246,8 +280,11 @@ class _WalletState extends State<Wallet> {
                                                     } else {
                                                       totalAmount = double
                                                               .parse(value) *
-                                                          double.parse(cryptoData[
-                                                              "total_amount"]);
+                                                          double.parse(pp[0][
+                                                                  "current_price_inr"]
+                                                              .toString());
+                                                      // double.parse(cryptoData[
+                                                      //     "total_amount"]);
                                                     }
                                                   });
                                                 },
@@ -294,33 +331,36 @@ class _WalletState extends State<Wallet> {
                                                   .width *
                                               0.03,
                                         ),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2,
-                                            color: AppColors.buttonColor,
-                                            child: TextButton(
-                                                onPressed: () {
-                                                  if (_bitCoinText.text ==
-                                                      "0") {
-                                                    showCustomToast(
-                                                        "give proper input");
-                                                  } else {
-                                                    _sellBitCoin();
-                                                  }
-                                                },
-                                                child: Text(
-                                                  "Sell Now",
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
-                                          ),
-                                        ),
+                                        pp.length == 0
+                                            ? SizedBox()
+                                            : Align(
+                                                alignment: Alignment.center,
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2,
+                                                  color: AppColors.buttonColor,
+                                                  child: TextButton(
+                                                      onPressed: () {
+                                                        if (_bitCoinText.text ==
+                                                            "0") {
+                                                          showCustomToast(
+                                                              "give proper input");
+                                                        } else {
+                                                          _sellBitCoin();
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        "Sell Now",
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )),
+                                                ),
+                                              ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size
@@ -731,13 +771,30 @@ class _WalletState extends State<Wallet> {
         }),
         "jsonParam": json.encode({"user_id": userId, "crypto_id": "bitcoin"})
       });
+      var formData2 = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
       var response = await Future.wait([
         dio.post(Consts.USER_LIST, data: formData),
-        dio.post(Consts.CRYPTOCURRENCY_WALLET, data: formData1)
+        dio.post(Consts.CRYPTOCURRENCY_WALLET, data: formData1),
+        dio.post(Consts.CRYPTO_CURRENCY, data: formData2)
       ]);
       responseData = response[0].data["respData"];
       cryptoData = response[1].data["respData"];
-      print("responseData..." + responseData.toString());
+      bitCoinPrice = response[2].data["respData"];
+      pp = response[2]
+          .data["respData"]
+          .where((e) => e["crypto_id"] == "bitcoin")
+          .toList();
+      print("responseData..user." + responseData.toString());
+      print("responseData..bitcoin." + bitCoinPrice.runtimeType.toString());
+      print("responseData..bitcoin." + pp.toString());
+      print("responseData..bitcoin." + pp[0]["current_price_inr"].toString());
+      print("responseData..." + cryptoData.toString());
       print("responseData..." + cryptoData[0].toString());
       print("walletAmount..." + responseData["wallet_amount"].toString());
       setState(() {

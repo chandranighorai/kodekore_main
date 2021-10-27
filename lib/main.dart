@@ -30,6 +30,10 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.instance.getToken().then((value) {
+    var fcmToken = value.toString();
+    print("FCM...in kodrcore..." + fcmToken.toString());
+  });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await flutterLocalNotificationsPlugin
@@ -102,7 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
       print('A new onMessageOpenedApp event was published!' +
           message.data.toString());
     });
-
     _getDetails();
   }
 

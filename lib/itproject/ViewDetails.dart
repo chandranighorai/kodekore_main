@@ -371,10 +371,13 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   void openCheckout(String key) async {
+    var price = widget.itModelAmount.split(".");
+    print("It Price..." +
+        ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     var options = {
       'key': key.toString(),
-      'amount':
-          (double.parse(widget.itModelAmount.toString()) * 100).toString(),
+      'amount': ((int.parse(price[0]) * 100) + int.parse(price[1])).toString(),
+      //(double.parse(widget.itModelAmount.toString()) * 100).toString(),
       'name': widget.itModelTitle.toString(),
       //'description': widget.itModelDescription.toString(),
       'prefill': {
@@ -407,12 +410,9 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print("Failure payment id..." + response.code.toString());
-    print("Failure payment id..." + response.message.toString());
-
-    showCustomToast("Failure..." +
-        response.code.toString() +
-        " " +
-        response.message.toString());
+    var message = json.decode(response.message);
+    print("Failure payment id..." + message["error"]["reason"].toString());
+    showCustomToast("Failure..." + message["error"]["reason"].toString());
   }
 
   _handleExternelWallet(ExternalWalletResponse response) {

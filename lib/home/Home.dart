@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/cryptocurrency/CryptoCurrency.dart';
@@ -23,6 +26,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
+  var dio = Dio();
   //FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   //     new FlutterLocalNotificationsPlugin();
@@ -66,6 +70,7 @@ class _HomeState extends State<Home> {
     // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     //   print('A new onMessageOpenedApp event was published!');
     // });
+    _userDetails();
   }
 
   @override
@@ -563,19 +568,43 @@ class _HomeState extends State<Home> {
             ));
   }
 
-  _notification() async {
-    AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance1_channel', // id
-      'High Importance Notifications', // title
-      'This channel is used for important notifications.', // description
-      importance: Importance.max,
-    );
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+  // _notification() async {
+  //   AndroidNotificationChannel channel = AndroidNotificationChannel(
+  //     'high_importance1_channel', // id
+  //     'High Importance Notifications', // title
+  //     'This channel is used for important notifications.', // description
+  //     importance: Importance.max,
+  //   );
+  //   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //       FlutterLocalNotificationsPlugin();
 
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+  //   await flutterLocalNotificationsPlugin
+  //       .resolvePlatformSpecificImplementation<
+  //           AndroidFlutterLocalNotificationsPlugin>()
+  //       ?.createNotificationChannel(channel);
+  // }
+
+  _userDetails() async {
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      var userId = pref.get("userId");
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({"user_id": userId})
+      });
+      var response = await dio.post(Consts.USER_LIST, data: formData);
+      print("response in home..." + response.data.toString());
+      print("response in home..." + response.data["respData"]["fcm_token"].toString());
+
+      setState(() {
+        pref.setString(
+            "FCM", response.data["respData"]["fcm_token"].toString());
+      });
+    } on DioError catch (e) {
+      print(e.toString());
+    }
   }
 }

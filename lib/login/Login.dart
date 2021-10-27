@@ -203,6 +203,7 @@ class _LoginState extends State<Login> {
           setState(() {
             pref.setString(
                 "otpStatus", response.data["respData"]["login_otp_status"]);
+            pref.setString("FCM", fcmToken.toString());
           });
           //if (response.data["respData"]["login_otp_status"] == 2) {
           Navigator.push(

@@ -166,7 +166,7 @@ class _CryptoCurrencyState extends State<CryptoCurrency> {
       return CryptoCurrencyModel.fromJson(response.data);
     } on DioError catch (e) {
       print(e.toString());
-      showCustomToast("response data..." + "No Network");
+      //showCustomToast("response data..." + "No Network");
     }
   }
 }

@@ -249,6 +249,7 @@ class _SignUpState extends State<SignUp> {
           })
         });
         var response = await dio.post(Consts.REGISTRATION, data: formData);
+        print("Response..." + response.toString());
         setState(() {
           _registerBtn = true;
         });

@@ -361,18 +361,22 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
       paymentStatus = "1";
       _buyNow();
     });
+    showCustomToast("Success: " + response.paymentId.toString());
   }
 
   _handlepaymentError(PaymentFailureResponse response) {
     print("Failure..." + response.code.toString());
     print("Failure..." + response.message.toString());
+    var message = json.decode(response.message);
     setState(() {
       buyEnable = true;
     });
+    showCustomToast("Failure: " + message["error"]["reason"].toString());
   }
 
   _handleExternalWallet(ExternalWalletResponse response) {
     print("Wallet..." + response.walletName.toString());
+    showCustomToast("Wallet: " + response.walletName.toString());
   }
 
   _keyGenerate() async {

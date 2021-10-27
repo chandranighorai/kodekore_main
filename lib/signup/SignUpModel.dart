@@ -36,6 +36,7 @@ class RespData {
   String firstName;
   String lastName;
   String email;
+  String fcmToken;
   String phone;
   String otpStatus;
 
@@ -44,6 +45,7 @@ class RespData {
       this.firstName,
       this.lastName,
       this.email,
+      this.fcmToken,
       this.phone,
       this.otpStatus});
 

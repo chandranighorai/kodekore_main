@@ -323,7 +323,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   _handlePaymentError(PaymentFailureResponse response) {
     print("Failure..." + response.code.toString());
     print("Failure..." + response.message.toString());
-    showCustomToast("Failure: " + response.message.toString());
+    var message = json.decode(response.message);
+    showCustomToast("Failure: " + message["error"]["reason"].toString());
   }
 
   _handleExternalWallet(ExternalWalletResponse response) {

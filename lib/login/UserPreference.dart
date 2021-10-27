@@ -11,4 +11,5 @@ saveUserPref(RespData responseData) async {
   sharedPreferences.setString("email", responseData.email.toString());
   sharedPreferences.setString("phone", responseData.phone.toString());
   sharedPreferences.setString("otpStatus", responseData.otpStatus.toString());
+  sharedPreferences.setString("FCM", responseData.fcmToken.toString());
 }
