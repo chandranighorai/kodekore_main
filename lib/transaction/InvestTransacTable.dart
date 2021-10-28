@@ -161,6 +161,7 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.2,
+
                                         //color: Colors.red,
                                         child: Text(
                                           items["date"],
@@ -171,6 +172,15 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.5,
+                                        // padding: EdgeInsets.only(
+                                        //     top: MediaQuery.of(context)
+                                        //             .size
+                                        //             .width *
+                                        //         0.02,
+                                        //     bottom: MediaQuery.of(context)
+                                        //             .size
+                                        //             .width *
+                                        //         0.02),
                                         child: Text(
                                           items["plan"],
                                           style: TextStyle(color: Colors.white),

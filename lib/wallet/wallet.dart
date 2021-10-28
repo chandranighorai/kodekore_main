@@ -9,6 +9,8 @@ import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
 import 'package:kode_core/wallet/wal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class Wallet extends StatefulWidget {
   var title;
@@ -20,16 +22,20 @@ class Wallet extends StatefulWidget {
 
 class _WalletState extends State<Wallet> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
+  static const platform = const MethodChannel("razorpay_flutter");
+  Razorpay _razorpay;
   var dio = Dio();
   var responseData;
   var cryptoData;
   var bitCoinPrice;
   bool _load = false;
-  String userId;
+  String userId, userPhone, userEmail;
   double totalAmount;
   TextEditingController _amountText, _bitCoinText;
   List pp;
   Timer _bitTimer;
+  String paymentStatus, paymentId;
+  double gst, tds, royalty;
   @override
   void initState() {
     // TODO: implement initState
@@ -37,6 +43,10 @@ class _WalletState extends State<Wallet> {
     _amountText = new TextEditingController();
     _bitCoinText = new TextEditingController();
     totalAmount = 0.0;
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     _getWallet();
   }
 
@@ -44,6 +54,7 @@ class _WalletState extends State<Wallet> {
   void dispose() {
     super.dispose();
     _bitTimer.cancel();
+    _razorpay.clear();
   }
 
   @override
@@ -647,7 +658,8 @@ class _WalletState extends State<Wallet> {
                                                   print("validation..." +
                                                       validation.toString());
                                                   if (validation) {
-                                                    _redeemRequest();
+                                                    // _redeemRequest();
+                                                    _keyGenerate();
                                                   }
                                                 },
                                                 child: Container(
@@ -757,6 +769,8 @@ class _WalletState extends State<Wallet> {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
       userId = pref.get("userId");
+      userPhone = pref.get("phone");
+      userEmail = pref.get("email");
       var formData = FormData.fromMap({
         "oAuth_json": json.encode({
           "sKey": "dfdbayYfd4566541cvxcT34#gt55",
@@ -778,25 +792,40 @@ class _WalletState extends State<Wallet> {
         }),
         "jsonParam": json.encode({})
       });
+      var formData3 = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
       var response = await Future.wait([
         dio.post(Consts.USER_LIST, data: formData),
         dio.post(Consts.CRYPTOCURRENCY_WALLET, data: formData1),
-        dio.post(Consts.CRYPTO_CURRENCY, data: formData2)
+        dio.post(Consts.CRYPTO_CURRENCY, data: formData2),
+        dio.post(Consts.TERMS_CONDITIONS, data: formData3)
       ]);
       responseData = response[0].data["respData"];
       cryptoData = response[1].data["respData"];
       bitCoinPrice = response[2].data["respData"];
+      gst = double.parse(response[3].data["respData"]["gst"]);
+      tds = double.parse(response[3].data["respData"]["tds"]);
+      royalty = double.parse(response[3].data["respData"]["royalty"]);
       pp = response[2]
           .data["respData"]
           .where((e) => e["crypto_id"] == "bitcoin")
           .toList();
-      print("responseData..user." + responseData.toString());
-      print("responseData..bitcoin." + bitCoinPrice.runtimeType.toString());
-      print("responseData..bitcoin." + pp.toString());
-      print("responseData..bitcoin." + pp[0]["current_price_inr"].toString());
-      print("responseData..." + cryptoData.toString());
-      print("responseData..." + cryptoData[0].toString());
-      print("walletAmount..." + responseData["wallet_amount"].toString());
+      // print("responseData..user." + responseData.toString());
+      // print("responseData..bitcoin." + bitCoinPrice.runtimeType.toString());
+      // print("responseData..bitcoin." + pp.toString());
+      // print("responseData..bitcoin." + pp[0]["current_price_inr"].toString());
+      // print("responseData..." + cryptoData.toString());
+      // print("responseData..." + cryptoData[0].toString());
+      // print("walletAmount..." + responseData["wallet_amount"].toString());
+      print("walletAmount..." + gst.toString());
+      print("walletAmount..." + tds.toString());
+      print("walletAmount..." + royalty.toString());
+
       setState(() {
         _load = true;
       });
@@ -807,14 +836,22 @@ class _WalletState extends State<Wallet> {
 
   _redeemRequest() async {
     print("amountText..." + userId);
+    print("amountText..." + _amountText.text.trim().toString());
+    print("amountText..." + paymentStatus.toString());
+    print("amountText..." + paymentId.toString());
+
     try {
       var formData = FormData.fromMap({
         "oAuth_json": json.encode({
           "sKey": "dfdbayYfd4566541cvxcT34#gt55",
           "aKey": "3EC5C12E6G34L34ED2E36A9"
         }),
-        "jsonParam": json.encode(
-            {"user_id": userId, "amount": _amountText.text.trim().toString()})
+        "jsonParam": json.encode({
+          "user_id": userId,
+          "amount": _amountText.text.trim().toString(),
+          "payment_status": paymentStatus,
+          "payment_id": paymentId
+        })
       });
       var response = await dio.post(Consts.REDEEM_REQUEST, data: formData);
       print("Response Body..." + response.data.toString());
@@ -837,6 +874,17 @@ class _WalletState extends State<Wallet> {
       //print("cryptoId..." + userId.toString());
       print("UserId..." + _bitCoinText.text.toString());
       print("UserId..." + totalAmount.toString());
+      double newGst = double.parse(totalAmount.toString()) * (gst / 100);
+      double newTds = double.parse(totalAmount.toString()) * (tds / 100);
+      double newTotal = newGst + newTds + double.parse(totalAmount.toString());
+
+      print("newGst..." + gst.toString());
+      print("newGst..." + tds.toString());
+      print("newGst..." + totalAmount.toString());
+      print("newGst..." + newGst.toString());
+      print("newGst..." + newTds.toString());
+      print("newGst..." + newTotal.toString());
+
       var formData = FormData.fromMap({
         "oAuth_json": json.encode({
           "sKey": "dfdbayYfd4566541cvxcT34#gt55",
@@ -846,7 +894,13 @@ class _WalletState extends State<Wallet> {
           "user_id": userId,
           "crypto_id": "bitcoin",
           "quantity": _bitCoinText.text.trim().toString(),
-          "amount": totalAmount.toString()
+          "amount": totalAmount.toString(),
+          "gst_per": gst.toString(),
+          "gst_rate": newGst.toString(),
+          "tds_per": tds.toString(),
+          "tds_rate": newTds.toString(),
+          "grand_total": newTotal.toString()
+          //"amount": totalAmount.toString()
         })
       });
       var response = await dio.post(Consts.SELL_CRIPTOCURRENCY, data: formData);
@@ -888,7 +942,7 @@ class _WalletState extends State<Wallet> {
           "user_id": userId,
           // "crypto_id": "bitcoin",
           // "quantity": _bitCoinText.text.trim().toString(),
-          "amount": totalAmount.toString()
+          "amount": _amountText.text.trim().toString(),
         })
       });
       var response = await dio.post(Consts.WITHDRAWAL, data: formdataWithdraw);
@@ -898,6 +952,68 @@ class _WalletState extends State<Wallet> {
       // setState(() {
       // });
     } on DioError catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _keyGenerate() async {
+    try {
+      var keyData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
+      var responseData = await dio.post(Consts.PAYMENT_KEYS, data: keyData);
+      if (responseData.data["success"] == 1) {
+        openCheckOut(responseData.data["respData"]["Key_Id"].toString());
+      }
+      print("data,,," + responseData.toString());
+    } on DioError catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print("Success..." + response.paymentId.toString());
+    paymentStatus = "1";
+    paymentId = response.paymentId.toString();
+    _redeemRequest();
+    showCustomToast("Success: " + response.paymentId.toString());
+  }
+
+  _handlePaymentError(PaymentFailureResponse response) {
+    print("Failure..." + response.message.toString());
+    var msg = json.decode(response.message);
+    print("Failure payment id..." + msg["error"]["reason"].toString());
+    showCustomToast("Failure..." + msg["error"]["reason"].toString());
+    //showCustomToast()
+  }
+
+  _handleExternalWallet(ExternalWalletResponse response) {
+    print("Externel payment id..." + response.walletName.toString());
+    showCustomToast("Externel wallet..." + response.walletName.toString());
+  }
+
+  openCheckOut(String keyData) async {
+    print("keyData,,," + keyData.toString());
+    print("keyData,,," + _amountText.text.trim().toString());
+    print("keyData,,," + userPhone.toString());
+    print("keyData,,," + userEmail.toString());
+
+    var options = {
+      'key': keyData,
+      'amount': int.parse(_amountText.text.trim().toString()) * 100,
+      'name': "Redeem",
+      'prefill': {'contact': userPhone, 'email': userEmail},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
       print(e.toString());
     }
   }

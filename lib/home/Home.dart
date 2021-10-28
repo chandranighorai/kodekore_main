@@ -130,7 +130,7 @@ class _HomeState extends State<Home> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      ItProjects("IT Project Investment")));
+                                      ItProjects("IT Projects")));
                         },
                         child: Container(
                           //height: 185,
@@ -165,7 +165,7 @@ class _HomeState extends State<Home> {
                                     ),
                               ),
                               Text(
-                                "IT Project Investment",
+                                "IT Projects",
                                 style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
@@ -597,7 +597,8 @@ class _HomeState extends State<Home> {
       });
       var response = await dio.post(Consts.USER_LIST, data: formData);
       print("response in home..." + response.data.toString());
-      print("response in home..." + response.data["respData"]["fcm_token"].toString());
+      print("response in home..." +
+          response.data["respData"]["fcm_token"].toString());
 
       setState(() {
         pref.setString(

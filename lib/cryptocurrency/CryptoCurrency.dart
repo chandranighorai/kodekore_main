@@ -30,6 +30,7 @@ class _CryptoCurrencyState extends State<CryptoCurrency> {
   var dio = Dio();
   var userId;
   Timer _timer;
+  double gst, tds, royalty;
   @override
   void initState() {
     super.initState();
@@ -133,7 +134,7 @@ class _CryptoCurrencyState extends State<CryptoCurrency> {
                               itemBuilder: (context, int index) {
                                 RespData cryptoData = cryptoCurrency[index];
                                 return CryptoCurrencyList(
-                                    cryptoDataList: cryptoData, userId: userId);
+                                    cryptoDataList: cryptoData, userId: userId,gst:gst,tds:tds,royalty:royalty);
                               });
                     } else {
                       return Center(
@@ -161,9 +162,22 @@ class _CryptoCurrencyState extends State<CryptoCurrency> {
         }),
         "jsonParam": json.encode({}),
       });
-      var response = await dio.post(Consts.CRYPTO_CURRENCY, data: formData);
-      print("response data..." + response.data.toString());
-      return CryptoCurrencyModel.fromJson(response.data);
+      var formData1 = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
+      var response = await Future.wait([
+        dio.post(Consts.CRYPTO_CURRENCY, data: formData),
+        dio.post(Consts.TERMS_CONDITIONS, data: formData1)
+      ]);
+      print("response data..." + response[0].data.toString());
+      gst = double.parse(response[1].data["respData"]["gst"]);
+      tds = double.parse(response[1].data["respData"]["tds"]);
+      royalty = double.parse(response[1].data["respData"]["royalty"]);
+      return CryptoCurrencyModel.fromJson(response[0].data);
     } on DioError catch (e) {
       print(e.toString());
       //showCustomToast("response data..." + "No Network");

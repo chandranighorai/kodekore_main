@@ -143,8 +143,17 @@ import '../util/Const.dart';
 class CryptoCurrencyList extends StatefulWidget {
   RespData cryptoDataList;
   String userId;
+  double gst;
+  double tds;
+  double royalty;
 
-  CryptoCurrencyList({this.cryptoDataList, this.userId, Key key})
+  CryptoCurrencyList(
+      {this.cryptoDataList,
+      this.userId,
+      this.gst,
+      this.tds,
+      this.royalty,
+      Key key})
       : super(key: key);
 
   @override
@@ -161,6 +170,7 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
   var userPhone, userEmail;
   String paymentId = "null";
   String paymentStatus = "null";
+  double newTotal, newGst, newTds;
   @override
   void initState() {
     // TODO: implement initState
@@ -332,7 +342,12 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
           "quantity": quantitytext.text.trim().toString(),
           "amount": amountText.toString(),
           "payment_status": paymentStatus,
-          "payment_id": paymentId
+          "payment_id": paymentId,
+          "gst_per": widget.gst.toString(),
+          "gst_rate": newGst.toString(),
+          "tds_per": widget.tds.toString(),
+          "tds_rate": newTds.toString(),
+          "grand_total": newTotal.toString()
         })
       });
       var response = await dio.post(Consts.BUY_CRYPTOCURRENCY, data: formData);
@@ -414,10 +429,20 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
 
   openCheckOut(String keyString) async {
     print("crpytoName..." + amountText.toString());
-    var price = amountText.split(".");
-    print("crpytoName..." + price.toString());
-    print("crpytoName..." +
-        (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString());
+    //var price = amountText.split(".");
+    // print("crpytoName..." + price.toString());
+    // print("crpytoName..." +
+    //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString());
+
+    newGst = double.parse(amountText.toString()) * (widget.gst / 100);
+    newTds = double.parse(amountText.toString()) * (widget.tds / 100);
+    newTotal = newGst + newTds + double.parse(amountText.toString());
+
+    print("newGst..." + newGst.toString());
+    print("newTds..." + newTds.toString());
+    print("newTotal..." + newTotal.toString());
+
+    var price = newTotal.toString().split(".");
 
     var options = {
       'key': keyString,

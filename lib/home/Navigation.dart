@@ -29,6 +29,7 @@ class _NavigationState extends State<Navigation> {
   var userName, userEmail, userPhoneNumber, firstName, lastName, userId;
   var dio = Dio();
   var terms, privacy;
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -161,7 +162,7 @@ class _NavigationState extends State<Navigation> {
                   ListTile(
                     visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                     title: Text(
-                      "IT Project Invest",
+                      "IT Projects",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width * 0.04),
@@ -170,8 +171,7 @@ class _NavigationState extends State<Navigation> {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                ItProjects("IT Project Investment"))),
+                            builder: (context) => ItProjects("IT Projects"))),
                   ),
                   Divider(
                     color: Colors.grey,
@@ -257,7 +257,7 @@ class _NavigationState extends State<Navigation> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                Notification1("Notifications",userId))),
+                                Notification1("Notifications", userId))),
                   ),
                   Divider(
                     color: Colors.grey,
@@ -399,6 +399,7 @@ class _NavigationState extends State<Navigation> {
       print("terms..." + response.data.toString());
       terms = response.data["respData"]["terms"];
       privacy = response.data["respData"]["privacy"];
+      
       print("terms...0..." + terms.toString());
       print("terms...0..." + privacy.toString());
     } on DioError catch (e) {
