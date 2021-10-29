@@ -136,7 +136,6 @@ import 'package:kode_core/util/AppColors.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Consts/AppConsts.dart';
 import '../util/Const.dart';
 
@@ -171,6 +170,7 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
   String paymentId = "null";
   String paymentStatus = "null";
   double newTotal, newGst, newTds;
+  int grandTotal;
   @override
   void initState() {
     // TODO: implement initState
@@ -347,7 +347,7 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
           "gst_rate": newGst.toString(),
           "tds_per": widget.tds.toString(),
           "tds_rate": newTds.toString(),
-          "grand_total": newTotal.toString()
+          "grand_total": (grandTotal / 100).toString()
         })
       });
       var response = await dio.post(Consts.BUY_CRYPTOCURRENCY, data: formData);
@@ -442,13 +442,15 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     print("newTds..." + newTds.toString());
     print("newTotal..." + newTotal.toString());
 
-    var price = newTotal.toString().split(".");
-
+    var price = newTotal.toStringAsFixed(2).split(".");
+    grandTotal = ((int.parse(price[0]) * 100) + (int.parse(price[1])));
+    print("newTotal..." + grandTotal.toString());
     var options = {
       'key': keyString,
       //'amount': (double.parse(amountText.toString()) * 100).toString(),
-      'amount':
-          (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString(),
+      // 'amount':
+      //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString(),
+      'amount': grandTotal.toString(),
       'name': widget.cryptoDataList.cryptoName.toString(),
       'prefill': {
         'contact': userPhone.toString(),

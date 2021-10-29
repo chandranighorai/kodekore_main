@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -30,6 +31,7 @@ class _InvestmentListState extends State<InvestmentList> {
   bool _pageLoad;
   String userId;
   Future<InvestmentModel> _investPlan;
+  double gst, tds, royalty;
   @override
   void initState() {
     super.initState();
@@ -98,7 +100,10 @@ class _InvestmentListState extends State<InvestmentList> {
                                       investmentDataList[index];
                                   return InvestmentPlanList(
                                       invesmentList: investmentModel,
-                                      userId: userId);
+                                      userId: userId,
+                                      gst: gst,
+                                      tds: tds,
+                                      royalty: royalty);
                                 });
                       } else {
                         return Center(
@@ -129,9 +134,21 @@ class _InvestmentListState extends State<InvestmentList> {
         }),
         "jsonParam": json.encode({})
       });
-      var response =
-          await dio.post(Consts.INVESTMENT_BY_USER, data: investmentData);
-      return InvestmentModel.fromJson(response.data);
+      var investmentData1 = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
+      var response = await Future.wait([
+        dio.post(Consts.INVESTMENT_BY_USER, data: investmentData),
+        dio.post(Consts.TERMS_CONDITIONS, data: investmentData1)
+      ]);
+      gst = double.parse(response[1].data["respData"]["gst"]);
+      tds = double.parse(response[1].data["respData"]["tds"]);
+      royalty = double.parse(response[1].data["respData"]["royalty"]);
+      return InvestmentModel.fromJson(response[0].data);
       // investmentDataList = response.data["respData"];
       // investmentSuccess = response.data["success"];
       // setState(() {

@@ -18,11 +18,15 @@ import 'NewModel.dart';
 
 class ViewDetails extends StatefulWidget {
   var itModelList, itModelTitle, itModelDescription, itModelAmount;
+  double gst, tds, royalty;
   ViewDetails(
       {this.itModelList,
       this.itModelTitle,
       this.itModelDescription,
       this.itModelAmount,
+      this.gst,
+      this.tds,
+      this.royalty,
       Key key})
       : super(key: key);
 
@@ -32,6 +36,8 @@ class ViewDetails extends StatefulWidget {
 
 class _ViewDetailsState extends State<ViewDetails> {
   //GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
+  double newTotal, newGst, newTds;
+  int grandTotal;
   var userId, userEmail, userphone;
   var dio = Dio();
   var responseData;
@@ -371,12 +377,23 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   void openCheckout(String key) async {
-    var price = widget.itModelAmount.split(".");
+    newGst = double.parse(widget.itModelAmount.toString()) * (widget.gst / 100);
+    newTds = double.parse(widget.itModelAmount.toString()) * (widget.tds / 100);
+    newTotal = newGst + newTds + double.parse(widget.itModelAmount.toString());
+    var price = newTotal.toStringAsFixed(2).split(".");
+    print("It Price..." + widget.gst.toString());
+    print("It Price..." + widget.tds.toString());
+    print("It Price..." + newGst.toString());
+    print("It Price..." + newTds.toString());
+    print("It Price..." + newTotal.toString());
+    print("It Price..." + price.toString());
     print("It Price..." +
         ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
+    grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
+    print("It Price..." + grandTotal.toString());
     var options = {
       'key': key.toString(),
-      'amount': ((int.parse(price[0]) * 100) + int.parse(price[1])).toString(),
+      'amount': grandTotal.toString(),
       //(double.parse(widget.itModelAmount.toString()) * 100).toString(),
       'name': widget.itModelTitle.toString(),
       //'description': widget.itModelDescription.toString(),
@@ -421,6 +438,16 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   _confirmBuy() async {
+    print("It Price...0.." + userId.toString());
+    print("It Price...0.." + widget.itModelList.toString());
+    print("It Price...0.." + widget.itModelAmount.toString());
+    print("It Price...0.." + paymentStatus.toString());
+    print("It Price...0.." + paymentId.toString());
+    print("It Price...0.." + widget.gst.toString());
+    print("It Price...0.." + newGst.toString());
+    print("It Price...0.." + widget.tds.toString());
+    print("It Price...0.." + newTds.toString());
+    print("It Price...0.." + (grandTotal / 100).toString());
     try {
       var boughtProject = FormData.fromMap({
         "oAuth_json": json.encode({
@@ -432,11 +459,18 @@ class _ViewDetailsState extends State<ViewDetails> {
           "it_proj_id": widget.itModelList.toString(),
           "amount": widget.itModelAmount.toString(),
           "payment_status": paymentStatus,
-          "payment_id": paymentId
+          "payment_id": paymentId,
+          "gst_per": widget.gst.toString(),
+          "gst_rate": newGst.toString(),
+          "tds_per": widget.tds.toString(),
+          "tds_rate": newTds.toString(),
+          "grand_total": (grandTotal / 100).toString()
         })
       });
       var _confirm =
           await dio.post(Consts.USER_BUY_IT_PROJECT, data: boughtProject);
+      print("Confirm It...");
+      print("Confirm It..." + _confirm.data.toString());
       if (_confirm.data["success"] == 1) {
         var buyResponseData = _confirm.data["respData"];
         BuyNowModel buyNowModel = BuyNowModel();

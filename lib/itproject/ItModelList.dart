@@ -7,13 +7,18 @@ import 'NewModel.dart';
 
 class ItModelList extends StatefulWidget {
   RespData itModelList;
-  ItModelList({this.itModelList, Key key}) : super(key: key);
+  double gst;
+  double tds;
+  double royalty;
+  ItModelList({this.itModelList, this.gst, this.tds, this.royalty, Key key})
+      : super(key: key);
 
   @override
   _ItModelListState createState() => _ItModelListState();
 }
 
 class _ItModelListState extends State<ItModelList> {
+  //double newTotal, newGst, newTds;
   @override
   void dispose() {
     super.dispose();
@@ -31,7 +36,10 @@ class _ItModelListState extends State<ItModelList> {
                     itModelList: widget.itModelList.itProjId.toString(),
                     itModelTitle: widget.itModelList.title,
                     itModelDescription: widget.itModelList.description,
-                    itModelAmount: widget.itModelList.amount)));
+                    itModelAmount: widget.itModelList.amount,
+                    gst: widget.gst,
+                    tds: widget.tds,
+                    royalty: widget.royalty)));
       },
       child: Padding(
         padding: EdgeInsets.only(

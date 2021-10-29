@@ -13,12 +13,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class InvestmentViewDetails extends StatefulWidget {
   String invPlanId, invPlanTitle, invPlanDesc, invPlanAmount, userId;
+  double gst, tds, royalty;
   InvestmentViewDetails(
       {this.invPlanId,
       this.invPlanTitle,
       this.invPlanDesc,
       this.invPlanAmount,
       this.userId,
+      this.gst,
+      this.tds,
+      this.royalty,
       Key key})
       : super(key: key);
 
@@ -37,6 +41,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   Razorpay _razorpay;
   String paymentStatus = "null";
   String paymentId = "null";
+  double newGst, newTds, newTotal;
+  int grandTotal;
   @override
   void initState() {
     // TODO: implement initState
@@ -280,6 +286,16 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   // }
 
   _investNow() async {
+    print("It Price...0.." + widget.userId.toString());
+    print("It Price...0.." + widget.invPlanId.toString());
+    print("It Price...0.." + amount.text.toString());
+    print("It Price...0.." + paymentStatus.toString());
+    print("It Price...0.." + paymentId.toString());
+    print("It Price...0.." + widget.gst.toString());
+    print("It Price...0.." + newGst.toString());
+    print("It Price...0.." + widget.tds.toString());
+    print("It Price...0.." + newTds.toString());
+    print("It Price...0.." + (grandTotal / 100).toString());
     try {
       if (amount.text.length == 0) {
         showCustomToast("Enter amount");
@@ -294,7 +310,12 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
             "inv_plan_id": widget.invPlanId,
             "inv_amount": amount.text.toString(),
             "payment_status": paymentStatus,
-            "payment_id": paymentId
+            "payment_id": paymentId,
+            "gst_per": widget.gst.toString(),
+            "gst_rate": newGst.toString(),
+            "tds_per": widget.tds.toString(),
+            "tds_rate": newTds.toString(),
+            "grand_total": (grandTotal / 100).toString()
           })
         });
         var invest =
@@ -361,9 +382,22 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
 
   openCheckOut(String keyString) async {
     print("KeyString..." + keyString.toString());
+    newGst = double.parse(amount.text.toString()) * (widget.gst / 100);
+    newTds = double.parse(amount.text.toString()) * (widget.tds / 100);
+    newTotal = newGst + newTds + double.parse(amount.text.toString());
+    var price = newTotal.toStringAsFixed(2).split(".");
+    print("It Price..." + widget.gst.toString());
+    print("It Price..." + widget.tds.toString());
+    print("It Price..." + newGst.toString());
+    print("It Price..." + newTds.toString());
+    print("It Price..." + newTotal.toString());
+    print("It Price..." +
+        ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
+    grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
     var options = {
       'key': keyString,
-      'amount': (double.parse(amount.text.toString()) * 100).toString(),
+      //'amount': (double.parse(amount.text.toString()) * 100).toString(),
+      'amount': grandTotal.toString(),
       'name': widget.invPlanTitle.toString(),
       'prefill': {
         'contact': userPhone.toString(),

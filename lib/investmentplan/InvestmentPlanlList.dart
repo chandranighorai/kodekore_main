@@ -7,7 +7,16 @@ import 'package:flutter_html/flutter_html.dart';
 class InvestmentPlanList extends StatefulWidget {
   RespData invesmentList;
   String userId;
-  InvestmentPlanList({this.invesmentList, this.userId, Key key})
+  double gst;
+  double tds;
+  double royalty;
+  InvestmentPlanList(
+      {this.invesmentList,
+      this.userId,
+      this.gst,
+      this.tds,
+      this.royalty,
+      Key key})
       : super(key: key);
 
   @override
@@ -27,7 +36,10 @@ class _InvestmentPlanListState extends State<InvestmentPlanList> {
                     invPlanTitle: widget.invesmentList.title,
                     invPlanDesc: widget.invesmentList.description,
                     invPlanAmount: widget.invesmentList.returnRate,
-                    userId: widget.userId)));
+                    userId: widget.userId,
+                    gst:widget.gst,
+                    tds: widget.tds,
+                    royalty: widget.royalty)));
       },
       child: Padding(
         padding: EdgeInsets.only(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -25,7 +26,7 @@ class ItProjects extends StatefulWidget {
 class _ItProjectsState extends State<ItProjects> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
   var dio = Dio();
-
+  double gst, tds, royalty;
   Future<ItModel> projectList;
   @override
   void initState() {
@@ -79,9 +80,9 @@ class _ItProjectsState extends State<ItProjects> {
                     initialData: null,
                     future: projectList,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      print("Snapshot...." + snapshot.hasData.toString());
                       if (snapshot.hasData) {
                         var responseData = snapshot.data.respData;
-                        
                         return responseData.length == 0
                             ? Center(
                                 child:
@@ -90,7 +91,11 @@ class _ItProjectsState extends State<ItProjects> {
                                 itemCount: responseData.length,
                                 itemBuilder: (context, int index) {
                                   RespData itModel = responseData[index];
-                                  return ItModelList(itModelList: itModel);
+                                  return ItModelList(
+                                      itModelList: itModel,
+                                      gst: gst,
+                                      tds: tds,
+                                      royalty: royalty);
                                 });
                       } else {
                         return Center(
@@ -115,9 +120,22 @@ class _ItProjectsState extends State<ItProjects> {
         }),
         "jsonParam": json.encode({})
       });
-      var response = await dio.post(Consts.IT_PROJECT_LIST, data: formData);
-
-      return ItModel.fromJson(response.data);
+      var formData1 = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
+      var response = await Future.wait([
+        dio.post(Consts.IT_PROJECT_LIST, data: formData),
+        dio.post(Consts.TERMS_CONDITIONS, data: formData1)
+      ]);
+      print("Data..." + response[0].data.toString());
+      gst = double.parse(response[1].data["respData"]["gst"]);
+      tds = double.parse(response[1].data["respData"]["tds"]);
+      royalty = double.parse(response[1].data["respData"]["royalty"]);
+      return ItModel.fromJson(response[0].data);
     } on DioError catch (e) {
       print(e.toString());
     }
