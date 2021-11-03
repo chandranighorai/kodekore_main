@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/Home/Home.dart';
+import 'package:kode_core/kyc/Kyc.dart';
 import 'package:kode_core/login/Otp.dart';
 import 'package:kode_core/login/UserPreference.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
@@ -272,8 +273,14 @@ class _SignUpState extends State<SignUp> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      Otp(regData: resData, pageName: "SignUp")));
+                  builder: (context) => KYC(
+                      userId:
+                          response.data["respData"]["user_id"].toString())));
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) =>
+          //             Otp(regData: resData, pageName: "SignUp")));
           // Navigator.push(
           //     context,
           //     MaterialPageRoute(

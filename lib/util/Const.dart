@@ -34,4 +34,5 @@ class Consts {
   static String NOTIFICATION = APP_URL + "notification-list";
   static String WITHDRAWAL = APP_URL + "withdrawal-request";
   static String PAYMENT_KEYS = APP_URL + "payment-keys";
+  static String update_kyc = APP_URL + "update-kyc";
 }
