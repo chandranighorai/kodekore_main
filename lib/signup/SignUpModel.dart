@@ -38,6 +38,7 @@ class RespData {
   String email;
   String fcmToken;
   String phone;
+  String kycStatus;
   String otpStatus;
 
   RespData(
@@ -47,6 +48,7 @@ class RespData {
       this.email,
       this.fcmToken,
       this.phone,
+      this.kycStatus,
       this.otpStatus});
 
   // RespData.fromJson(Map<String, dynamic> json) {

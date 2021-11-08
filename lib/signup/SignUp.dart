@@ -262,6 +262,8 @@ class _SignUpState extends State<SignUp> {
           resData.email = response.data["respData"]["email"];
           resData.phone = response.data["respData"]["phone"];
           resData.otpStatus = response.data["respData"]["otp_status"];
+          resData.kycStatus = response.data["respData"]["kyc_status"];
+
           saveUserPref(resData);
           setState(() {
             firstNameText.text = "";
@@ -274,8 +276,9 @@ class _SignUpState extends State<SignUp> {
               context,
               MaterialPageRoute(
                   builder: (context) => KYC(
-                      userId:
-                          response.data["respData"]["user_id"].toString())));
+                      userId: response.data["respData"]["user_id"].toString(),
+                      regData: resData,
+                      pageName: "SignUp")));
           // Navigator.push(
           //     context,
           //     MaterialPageRoute(

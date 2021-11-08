@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/home/Home.dart';
 import 'package:kode_core/home/Navigation.dart';
+import 'package:kode_core/kyc/Kyc.dart';
+import 'package:kode_core/kyc/KycModel.dart';
 import 'package:kode_core/login/UserPreference.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
 import 'package:kode_core/signup/SignUpModel.dart';
@@ -30,6 +32,7 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   TextEditingController firstNameEditText, lastNameEditText;
   var dio = Dio();
+  KycData kycData;
   @override
   void initState() {
     firstNameEditText = new TextEditingController();
@@ -37,6 +40,7 @@ class _EditProfileState extends State<EditProfile> {
     //numberEditText = new TextEditingController();
     firstNameEditText.text = widget.firstName;
     lastNameEditText.text = widget.lastName;
+    _kycUpdate();
     super.initState();
   }
 
@@ -147,6 +151,25 @@ class _EditProfileState extends State<EditProfile> {
                             "update".toUpperCase(),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.width * 0.03,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => KYC(
+                                      userId: widget.userId,
+                                      kycData: kycData,
+                                      pageName: "EditProfile",
+                                    )));
+                      },
+                      child: Text(
+                        "KYC Update",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     )
                   ],
                 ),
@@ -160,6 +183,7 @@ class _EditProfileState extends State<EditProfile> {
 
   _update() async {
     try {
+      //print("data..." + kycData.bankName.toString());
       if ((firstNameEditText.text.trim().length == 0) ||
           (lastNameEditText.text.trim().length == 0)) {
         showCustomToast("Field should not blank");
@@ -194,6 +218,38 @@ class _EditProfileState extends State<EditProfile> {
     } on DioError catch (e) {
       print(e.toString());
       showCustomToast("No Network");
+    }
+  }
+
+  _kycUpdate() async {
+    try {
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({"user_id": widget.userId})
+      });
+      var response = await dio.post(Consts.USER_LIST, data: formData);
+      print("response body..." + response.data.toString());
+      if (response.data["success"] == 1) {
+        kycData = new KycData();
+        kycData.userId = response.data["respData"]["user_id"];
+        kycData.kycType = response.data["respData"]["kyc_type"];
+        kycData.bankName = response.data["respData"]["bank_name"];
+        kycData.branchName = response.data["respData"]["branch_name"];
+        kycData.acNo = response.data["respData"]["ac_no"];
+        kycData.ifsc = response.data["respData"]["ifsc"];
+        kycData.acName = response.data["respData"]["ac_name"];
+        kycData.panNo = response.data["respData"]["pan_no"];
+        kycData.aadhaarNo = response.data["respData"]["aadhaar_no"];
+        kycData.kycPanFile = response.data["respData"]["kyc_pan_file"];
+        kycData.kycAadhaarFile = response.data["respData"]["kyc_aadhaar_file"];
+
+        //print("bank..." + kycData.bankName);
+      }
+    } on DioError catch (e) {
+      print(e.toString());
     }
   }
 }

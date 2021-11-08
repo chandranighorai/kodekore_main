@@ -3,14 +3,23 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kode_core/Consts/AppConsts.dart';
+import 'package:kode_core/kyc/KycModel.dart';
+import 'package:kode_core/login/Otp.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
+import 'package:kode_core/signup/SignUpModel.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
 import 'package:image_picker_gallery_camera/image_picker_gallery_camera.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KYC extends StatefulWidget {
   String userId;
-  KYC({this.userId, Key key}) : super(key: key);
+  RespData regData;
+  KycData kycData;
+  String pageName;
+  KYC({this.userId, this.regData, this.kycData, this.pageName, Key key})
+      : super(key: key);
 
   @override
   _KYCState createState() => _KYCState();
@@ -25,6 +34,7 @@ class _KYCState extends State<KYC> {
       panText,
       adhaarText;
   var _image, _image1;
+  bool updateEnable = false;
   @override
   void initState() {
     super.initState();
@@ -35,6 +45,21 @@ class _KYCState extends State<KYC> {
     acNameText = new TextEditingController();
     panText = new TextEditingController();
     adhaarText = new TextEditingController();
+    KycData dd;
+
+    ///print("sda" + widget.kycData.ifsc);
+    if (widget.pageName == "EditProfile") {
+      bankNameText.text = widget.kycData.bankName;
+      branchNameText.text = widget.kycData.branchName;
+      acNoText.text = widget.kycData.acNo;
+      ifscText.text = widget.kycData.ifsc;
+      acNameText.text = widget.kycData.acName;
+      panText.text = widget.kycData.panNo;
+      adhaarText.text = widget.kycData.aadhaarNo;
+      _image = widget.kycData.kycPanFile;
+      _image1 = widget.kycData.kycAadhaarFile;
+    }
+    //KycData data;
   }
 
   @override
@@ -82,6 +107,7 @@ class _KYCState extends State<KYC> {
 
   @override
   Widget build(BuildContext context) {
+    //print("pro..." + widget.regData1.bankName);
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -185,15 +211,30 @@ class _KYCState extends State<KYC> {
                         children: [
                           Text("Pan Image"),
                           Spacer(),
-                          TextButton(
-                            child: Text("Upload"),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    AppColors.buttonColor)),
-                            onPressed: () {
-                              _chooseOption(1);
-                            },
-                          )
+                          _image != null
+                              ? TextButton(
+                                  child: Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                  ),
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.green)),
+                                  onPressed: () {
+                                    // _chooseOption(1);
+                                  },
+                                )
+                              : TextButton(
+                                  child: Text("Upload"),
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              AppColors.buttonColor)),
+                                  onPressed: () {
+                                    _chooseOption(1);
+                                  },
+                                )
                           // Container(
                           //     padding: EdgeInsets.only(
                           //         top: MediaQuery.of(context).size.width * 0.02,
@@ -219,15 +260,30 @@ class _KYCState extends State<KYC> {
                         children: [
                           Text("Adhaar Image"),
                           Spacer(),
-                          TextButton(
-                            child: Text("Upload"),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    AppColors.buttonColor)),
-                            onPressed: () {
-                              _chooseOption(2);
-                            },
-                          )
+                          _image1 != null
+                              ? TextButton(
+                                  child: Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                  ),
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.green)),
+                                  onPressed: () {
+                                    // _chooseOption(1);
+                                  },
+                                )
+                              : TextButton(
+                                  child: Text("Upload"),
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              AppColors.buttonColor)),
+                                  onPressed: () {
+                                    _chooseOption(2);
+                                  },
+                                )
                           // Container(
                           //     padding: EdgeInsets.only(
                           //         top: MediaQuery.of(context).size.width * 0.02,
@@ -249,20 +305,33 @@ class _KYCState extends State<KYC> {
                       SizedBox(
                         height: MediaQuery.of(context).size.width * 0.07,
                       ),
-                      InkWell(
-                        onTap: () {
-                          _upDate();
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.width * 0.03,
-                              bottom: MediaQuery.of(context).size.width * 0.03),
-                          color: AppColors.buttonColor,
-                          child: Text("Update".toUpperCase()),
-                        ),
-                      )
+                      updateEnable == true
+                          ? Container(
+                              width: MediaQuery.of(context).size.width,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.width * 0.03,
+                                  bottom:
+                                      MediaQuery.of(context).size.width * 0.03),
+                              color: AppColors.buttonColor.withOpacity(0.2),
+                              child: Text("Update".toUpperCase()),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                _upDate();
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.width *
+                                        0.03,
+                                    bottom: MediaQuery.of(context).size.width *
+                                        0.03),
+                                color: AppColors.buttonColor,
+                                child: Text("Update".toUpperCase()),
+                              ),
+                            )
                       // TextButton(
 
                       //   onPressed: null,
@@ -306,33 +375,83 @@ class _KYCState extends State<KYC> {
 
   _upDate() async {
     var dio = Dio();
+    print("pan..." + widget.userId.toString());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
-      var pan = await MultipartFile.fromFile(_image.path, filename: "pan.jpg");
-      var adhar =
-          await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg");
-      print("Pan..." + pan.toString());
-      print("Adhar..." + adhar.toString());
-
-      var formData = FormData.fromMap({
-        "oAuth_json": json.encode({
-          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-          "aKey": "3EC5C12E6G34L34ED2E36A9"
-        }),
-        "jsonParam": json.encode({
-          "user_id": widget.userId.toString(),
-          "bank_name": bankNameText.text.trim(),
-          "branch_name": branchNameText.text.trim(),
-          "ac_no": acNoText.text.trim(),
-          "ifsc": ifscText.text.trim(),
-          "ac_name": acNameText.text.trim(),
-          "pan_no": panText.text.trim(),
-          "aadhaar_no": adhaarText.text.trim()
-        }),
-        "kyc_pan_file": pan,
-        "kyc_aadhaar_file": adhar
-      });
-      var response = await dio.post(Consts.update_kyc, data: formData);
-      print("Data..." + response.data.toString());
+      if (bankNameText.text.isEmpty ||
+          branchNameText.text.isEmpty ||
+          acNoText.text.isEmpty ||
+          ifscText.text.isEmpty ||
+          acNameText.text.isEmpty ||
+          panText.text.isEmpty ||
+          adhaarText.text.isEmpty) {
+        showCustomToast("Field should not empty");
+      } else if (_image == null || _image1 == null) {
+        showCustomToast("Please upload Pan & Adhaar photo");
+      } else {
+        // var pan =
+        //     await MultipartFile.fromFile(_image.path, filename: "pan.jpg");
+        // var adhar =
+        //     await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg");
+        // print("Pan..." + pan.toString());
+        // print("Adhar..." + adhar.toString());
+        setState(() {
+          updateEnable = true;
+        });
+        var formData = FormData.fromMap({
+          "oAuth_json": json.encode({
+            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+            "aKey": "3EC5C12E6G34L34ED2E36A9"
+          }),
+          "jsonParam": json.encode({
+            "user_id": widget.userId.toString(),
+            "bank_name": bankNameText.text.trim(),
+            "branch_name": branchNameText.text.trim(),
+            "ac_no": acNoText.text.trim(),
+            "ifsc": ifscText.text.trim(),
+            "ac_name": acNameText.text.trim(),
+            "pan_no": panText.text.trim(),
+            "aadhaar_no": adhaarText.text.trim(),
+            "kyc_type": widget.pageName == "EditProfile" ? "2" : "1"
+          })
+          // "kyc_pan_file":
+          //     await MultipartFile.fromFile(_image.path, filename: "pan.jpg"),
+          // "kyc_aadhaar_file":
+          //     await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg")
+        });
+        //print("FormData..." + pan.toString());
+        var response = await dio.post(Consts.update_kyc, data: formData);
+        print("Data..." + response.data.toString());
+        setState(() {
+          prefs.setString(
+              "KycStatus", response.data["respData"]["kyc_status"].toString());
+        });
+        if (response.data["success"] == 1) {
+          bankNameText.text = "";
+          branchNameText.text = "";
+          acNoText.text = "";
+          ifscText.text = "";
+          acNameText.text = "";
+          panText.text = "";
+          adhaarText.text = "";
+          setState(() {
+            _image = null;
+            _image1 = null;
+          });
+          showCustomToast(response.data["message"].toString());
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Otp(regData: widget.regData, pageName: widget.pageName)));
+          return KycModel.fromJson(response.data);
+        } else {
+          setState(() {
+            updateEnable = false;
+            showCustomToast("Slow Network");
+          });
+        }
+      }
     } on DioError catch (e) {
       print(e.toString());
     }

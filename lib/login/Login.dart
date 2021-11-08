@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
+import 'package:kode_core/kyc/Kyc.dart';
 import 'package:kode_core/login/Otp.dart';
 import 'package:kode_core/signup/SignUp.dart';
 import 'package:kode_core/signup/SignUpModel.dart';
@@ -204,16 +205,28 @@ class _LoginState extends State<Login> {
             pref.setString(
                 "otpStatus", response.data["respData"]["login_otp_status"]);
             pref.setString("FCM", fcmToken.toString());
+            pref.setString(
+                "KycStatus", response.data["respData"]["kyc_status"]);
           });
-          //if (response.data["respData"]["login_otp_status"] == 2) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Otp(
-                        regData: resp,
-                        pageName: "logIn",
-                      )));
-          //}
+          if (response.data["respData"]["kyc_status"] == "1" ||
+              response.data["respData"]["kyc_status"] == "2") {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Otp(
+                          regData: resp,
+                          pageName: "logIn",
+                        )));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => KYC(
+                          userId: response.data["respData"]["user_id"],
+                          regData: resp,
+                          pageName: "logIn",
+                        )));
+          }
           setState(() {
             _btnClick = true;
           });

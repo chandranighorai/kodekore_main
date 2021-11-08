@@ -67,7 +67,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var otpStatus;
+  var otpStatus, kycStatus;
   bool pageLoad;
 
   @override
@@ -132,7 +132,10 @@ class _MyHomePageState extends State<MyHomePage> {
       SharedPreferences pref = await SharedPreferences.getInstance();
       setState(() {
         otpStatus = pref.getString("otpStatus");
+        kycStatus = pref.getString("KycStatus");
         print("otpStatus...." + otpStatus.toString());
+        print("kycStatus...." + kycStatus.toString());
+
         pageLoad = true;
       });
     } on DioError catch (e) {

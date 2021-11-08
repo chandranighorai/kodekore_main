@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/home/Home.dart';
+import 'package:kode_core/kyc/Kyc.dart';
 import 'package:kode_core/signup/SignUpModel.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
@@ -188,12 +189,26 @@ class _OtpState extends State<Otp> {
           setState(() {
             pref.setString(
                 "otpStatus", response.data["respData"]["otp_status"]);
+            pref.setString(
+                "KycStatus", response.data["respData"]["kyc_status"]);
             otpText.text = "";
           });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-              (route) => false);
+          print("kyc...." + response.data["respData"]["kyc_status"].toString());
+          if (response.data["respData"]["kyc_status"] == "1" ||
+              response.data["respData"]["kyc_status"] == "2") {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                (route) => false);
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => KYC(
+                        userId: widget.regData.userId.toString(),
+                        regData: widget.regData,
+                        pageName: widget.pageName)));
+          }
         }
       }
     } on DioError catch (e) {
@@ -206,6 +221,8 @@ class _OtpState extends State<Otp> {
     // print("otpSubmitLogin...");
     // print("otpSubmitLogin..." + widget.regData.userId.toString());
     // print("otpSubmitLogin..." + otpText.text.trim().toString());
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var keyStatus = pref.getString("KycStatus");
     try {
       if (otpText.text.length == 0) {
         showCustomToast("Enter valid OTP");
@@ -241,14 +258,29 @@ class _OtpState extends State<Otp> {
           respData1.phone = logInResponse.data["respData"]["phone"];
           respData1.otpStatus =
               logInResponse.data["respData"]["login_otp_status"];
+          respData1.kycStatus = logInResponse.data["respData"]["kyc_status"];
           saveUserPref(respData1);
           setState(() {
             otpText.text = "";
           });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) => Home()),
-              (route) => false);
+          print("otpSubmitLogin..." +
+              logInResponse.data["respData"]["kyc_status"].toString());
+
+          if (logInResponse.data["respData"]["kyc_status"] == "1" ||
+              logInResponse.data["respData"]["kyc_status"] == "2") {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => Home()),
+                (route) => false);
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => KYC(
+                        userId: widget.regData.userId.toString(),
+                        regData: widget.regData,
+                        pageName: widget.pageName)));
+          }
         }
       }
     } on DioError catch (e) {
