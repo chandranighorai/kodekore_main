@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
@@ -56,8 +55,8 @@ class _KYCState extends State<KYC> {
       acNameText.text = widget.kycData.acName;
       panText.text = widget.kycData.panNo;
       adhaarText.text = widget.kycData.aadhaarNo;
-      _image = widget.kycData.kycPanFile;
-      _image1 = widget.kycData.kycAadhaarFile;
+      // _image = widget.kycData.kycPanFile;
+      // _image1 = widget.kycData.kycAadhaarFile;
     }
     //KycData data;
   }
@@ -186,7 +185,8 @@ class _KYCState extends State<KYC> {
                       TextFormField(
                         controller: acNameText,
                         keyboardType: TextInputType.name,
-                        decoration: InputDecoration(hintText: "A/C Name"),
+                        decoration:
+                            InputDecoration(hintText: "A/C Holder Name"),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.width * 0.02,
@@ -373,11 +373,20 @@ class _KYCState extends State<KYC> {
             ));
   }
 
-  _upDate() async {
-    var dio = Dio();
-    print("pan..." + widget.userId.toString());
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  _upDate() {
     try {
+      //print("pag..." + widget.pageName.toString());
+      // print("bank..." + widget.userId.toString());
+      // print("bank..." + bankNameText.text.toString());
+      // print("bank..." + branchNameText.text.toString());
+      // print("bank..." + acNoText.text.toString());
+      // print("bank..." + ifscText.text.toString());
+      // print("bank..." + acNameText.text.toString());
+      // print("bank..." + panText.text.toString());
+      // print("bank..." + adhaarText.text.toString());
+      // print("bank..." + _image.path.toString());
+      // print("bank..." + _image1.path.toString());
+
       if (bankNameText.text.isEmpty ||
           branchNameText.text.isEmpty ||
           acNoText.text.isEmpty ||
@@ -386,73 +395,103 @@ class _KYCState extends State<KYC> {
           panText.text.isEmpty ||
           adhaarText.text.isEmpty) {
         showCustomToast("Field should not empty");
-      } else if (_image == null || _image1 == null) {
-        showCustomToast("Please upload Pan & Adhaar photo");
-      } else {
-        // var pan =
-        //     await MultipartFile.fromFile(_image.path, filename: "pan.jpg");
-        // var adhar =
-        //     await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg");
-        // print("Pan..." + pan.toString());
-        // print("Adhar..." + adhar.toString());
-        setState(() {
-          updateEnable = true;
-        });
-        var formData = FormData.fromMap({
-          "oAuth_json": json.encode({
-            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-            "aKey": "3EC5C12E6G34L34ED2E36A9"
-          }),
-          "jsonParam": json.encode({
-            "user_id": widget.userId.toString(),
-            "bank_name": bankNameText.text.trim(),
-            "branch_name": branchNameText.text.trim(),
-            "ac_no": acNoText.text.trim(),
-            "ifsc": ifscText.text.trim(),
-            "ac_name": acNameText.text.trim(),
-            "pan_no": panText.text.trim(),
-            "aadhaar_no": adhaarText.text.trim(),
-            "kyc_type": widget.pageName == "EditProfile" ? "2" : "1"
-          })
-          // "kyc_pan_file":
-          //     await MultipartFile.fromFile(_image.path, filename: "pan.jpg"),
-          // "kyc_aadhaar_file":
-          //     await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg")
-        });
-        //print("FormData..." + pan.toString());
-        var response = await dio.post(Consts.update_kyc, data: formData);
-        print("Data..." + response.data.toString());
-        setState(() {
-          prefs.setString(
-              "KycStatus", response.data["respData"]["kyc_status"].toString());
-        });
-        if (response.data["success"] == 1) {
-          bankNameText.text = "";
-          branchNameText.text = "";
-          acNoText.text = "";
-          ifscText.text = "";
-          acNameText.text = "";
-          panText.text = "";
-          adhaarText.text = "";
-          setState(() {
-            _image = null;
-            _image1 = null;
-          });
-          showCustomToast(response.data["message"].toString());
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Otp(regData: widget.regData, pageName: widget.pageName)));
-          return KycModel.fromJson(response.data);
+      } else if (widget.pageName != "EditProfile") {
+        if (_image == null || _image1 == null) {
+          showCustomToast("Please upload Pan & Adhaar photo");
         } else {
-          setState(() {
-            updateEnable = false;
-            showCustomToast("Slow Network");
-          });
+          _kyc();
         }
       }
+      // (_image == null || _image1 == null) {
+      //   showCustomToast("Please upload Pan & Adhaar photo");
+      // }
+      else {
+        _kyc();
+      }
     } on DioError catch (e) {
+      setState(() {
+        updateEnable = false;
+      });
+      print(e.toString());
+    }
+  }
+
+  _kyc() async {
+    try {
+      var dio = Dio();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print("pag..." + widget.pageName.toString());
+
+      // var pan =
+      //     await MultipartFile.fromFile(_image.path, filename: "pan.jpg");
+      // var adhar =
+      //     await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg");
+      // print("Pan..." + pan.toString());
+      // print("Adhar..." + adhar.toString());
+      setState(() {
+        updateEnable = true;
+      });
+      var formData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({
+          "user_id": widget.userId.toString(),
+          "bank_name": bankNameText.text.trim(),
+          "branch_name": branchNameText.text.trim(),
+          "ac_no": acNoText.text.trim(),
+          "ifsc": ifscText.text.trim(),
+          "ac_name": acNameText.text.trim(),
+          "pan_no": panText.text.trim(),
+          "aadhaar_no": adhaarText.text.trim(),
+          "kyc_type": widget.pageName == "EditProfile" ? "2" : "1"
+        }),
+        "kyc_pan_file": _image == null
+            ? ""
+            : await MultipartFile.fromFile(_image.path, filename: "pan.jpg"),
+        "kyc_aadhaar_file": _image1 == null
+            ? ""
+            : await MultipartFile.fromFile(_image1.path, filename: "adhar.jpg")
+      });
+      //print("FormData..." + pan.toString());
+      var response = await dio.post(Consts.update_kyc, data: formData);
+      print("Data..." + response.data.toString());
+      setState(() {
+        prefs.setString(
+            "KycStatus", response.data["respData"]["kyc_status"].toString());
+      });
+      if (response.data["success"] == 1) {
+        bankNameText.text = "";
+        branchNameText.text = "";
+        acNoText.text = "";
+        ifscText.text = "";
+        acNameText.text = "";
+        panText.text = "";
+        adhaarText.text = "";
+        setState(() {
+          _image = null;
+          _image1 = null;
+        });
+        showCustomToast(response.data["message"].toString());
+        widget.pageName == "EditProfile"
+            ? Navigator.pop(context)
+            : Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Otp(
+                        regData: widget.regData, pageName: widget.pageName)));
+        return KycModel.fromJson(response.data);
+      } else {
+        setState(() {
+          updateEnable = false;
+          showCustomToast("Slow Network");
+        });
+      }
+    } on DioError catch (e) {
+      setState(() {
+        updateEnable = false;
+      });
       print(e.toString());
     }
   }

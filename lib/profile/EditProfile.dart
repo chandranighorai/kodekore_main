@@ -47,135 +47,140 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     print("FirstName..." + widget.firstName.toString());
-    return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("asset/bg4.jpg"), fit: BoxFit.cover)),
-        child: Stack(
-          children: [
-            ShapeComponent(context, Consts.shapeHeight),
-            Positioned(
-              top: MediaQuery.of(context).size.width * 0.06,
-              left: MediaQuery.of(context).size.width * 0.03,
-              child: IconButton(
-                  onPressed: () => Navigator.of(context).pop({
-                        "firstName": firstNameEditText.text.trim().length == 0
-                            ? widget.firstName
-                            : firstNameEditText.text.trim().toString(),
-                        "lastName": lastNameEditText.text.trim().length == 0
-                            ? widget.lastName
-                            : lastNameEditText.text.trim().toString()
-                      }),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  )),
-            ),
-            Wal("Edit Profile"),
-            Positioned(
-              top: MediaQuery.of(context).size.width * 0.55,
-              left: MediaQuery.of(context).size.width * 0.08,
-              right: MediaQuery.of(context).size.width * 0.08,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 9.0)],
-                    borderRadius: BorderRadius.all(Radius.circular(
-                        MediaQuery.of(context).size.width * 0.02))),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      keyboardType: TextInputType.name,
-                      controller: firstNameEditText,
-                      decoration: InputDecoration(hintText: "Enter First name"),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.name,
-                      controller: lastNameEditText,
-                      decoration: InputDecoration(hintText: "Enter Last name"),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      color: Colors.grey[100],
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.width * 0.04,
-                          bottom: MediaQuery.of(context).size.width * 0.03),
-                      child: Text("${widget.email}"),
-                    ),
-                    // Divider(
-                    //   color: Colors.grey,
-                    //   thickness: 1,
-                    // ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      color: Colors.grey[100],
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.width * 0.04,
-                          bottom: MediaQuery.of(context).size.width * 0.03),
-                      child: Text("${widget.phone}"),
-                    ),
-                    // Divider(
-                    //   color: Colors.grey,
-                    //   thickness: 1,
-                    // ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.07,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _update();
-                      },
-                      child: Container(
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.width * 0.03,
-                              bottom: MediaQuery.of(context).size.width * 0.03,
-                              left: MediaQuery.of(context).size.width * 0.12,
-                              right: MediaQuery.of(context).size.width * 0.12),
-                          color: AppColors.buttonColor,
-                          child: Text(
-                            "update".toUpperCase(),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => KYC(
-                                      userId: widget.userId,
-                                      kycData: kycData,
-                                      pageName: "EditProfile",
-                                    )));
-                      },
-                      child: Text(
-                        "KYC Update",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
+    return WillPopScope(
+      // ignore: missing_return
+      onWillPop: () {
+        _updateName();
+      },
+      child: Scaffold(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("asset/bg4.jpg"), fit: BoxFit.cover)),
+          child: Stack(
+            children: [
+              ShapeComponent(context, Consts.shapeHeight),
+              Positioned(
+                top: MediaQuery.of(context).size.width * 0.06,
+                left: MediaQuery.of(context).size.width * 0.03,
+                child: IconButton(
+                    onPressed: () => _updateName(),
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    )),
               ),
-            )
-          ],
+              Wal("Edit Profile"),
+              Positioned(
+                top: MediaQuery.of(context).size.width * 0.55,
+                left: MediaQuery.of(context).size.width * 0.08,
+                right: MediaQuery.of(context).size.width * 0.08,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.grey, blurRadius: 9.0)
+                      ],
+                      borderRadius: BorderRadius.all(Radius.circular(
+                          MediaQuery.of(context).size.width * 0.02))),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        keyboardType: TextInputType.name,
+                        controller: firstNameEditText,
+                        decoration:
+                            InputDecoration(hintText: "Enter First name"),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.name,
+                        controller: lastNameEditText,
+                        decoration:
+                            InputDecoration(hintText: "Enter Last name"),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        color: Colors.grey[100],
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.width * 0.04,
+                            bottom: MediaQuery.of(context).size.width * 0.03),
+                        child: Text("${widget.email}"),
+                      ),
+                      // Divider(
+                      //   color: Colors.grey,
+                      //   thickness: 1,
+                      // ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        color: Colors.grey[100],
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.width * 0.04,
+                            bottom: MediaQuery.of(context).size.width * 0.03),
+                        child: Text("${widget.phone}"),
+                      ),
+                      // Divider(
+                      //   color: Colors.grey,
+                      //   thickness: 1,
+                      // ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.07,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _update();
+                        },
+                        child: Container(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.width * 0.03,
+                                bottom:
+                                    MediaQuery.of(context).size.width * 0.03,
+                                left: MediaQuery.of(context).size.width * 0.12,
+                                right:
+                                    MediaQuery.of(context).size.width * 0.12),
+                            color: AppColors.buttonColor,
+                            child: Text(
+                              "update".toUpperCase(),
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => KYC(
+                                        userId: widget.userId,
+                                        kycData: kycData,
+                                        pageName: "EditProfile",
+                                      ))).then((value) => _kycUpdate());
+                        },
+                        child: Text(
+                          "KYC Update",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -251,5 +256,16 @@ class _EditProfileState extends State<EditProfile> {
     } on DioError catch (e) {
       print(e.toString());
     }
+  }
+
+  _updateName() {
+    return Navigator.of(context).pop({
+      "firstName": firstNameEditText.text.trim().length == 0
+          ? widget.firstName
+          : firstNameEditText.text.trim().toString(),
+      "lastName": lastNameEditText.text.trim().length == 0
+          ? widget.lastName
+          : lastNameEditText.text.trim().toString()
+    });
   }
 }

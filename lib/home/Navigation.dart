@@ -26,10 +26,10 @@ class Navigation extends StatefulWidget {
 }
 
 class _NavigationState extends State<Navigation> {
-  var userName, userEmail, userPhoneNumber, firstName, lastName, userId;
+  var userName, userEmail, userPhoneNumber, firstName, lastName, userId, name;
   var dio = Dio();
   var terms, privacy;
-  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -54,23 +54,38 @@ class _NavigationState extends State<Navigation> {
                 children: [
                   Container(
                     //height: MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width / 3.8,
+                    alignment: Alignment.center,
+                    //width: MediaQuery.of(context).size.width / 3.8,
+                    width: MediaQuery.of(context).size.width / 4.8,
+
                     margin: EdgeInsets.only(
                         top: MediaQuery.of(context).size.width * 0.02,
                         left: MediaQuery.of(context).size.width * 0.01,
                         bottom: MediaQuery.of(context).size.width * 0.02,
                         right: MediaQuery.of(context).size.width * 0.01),
-                    padding: EdgeInsets.all(10),
-                    decoration:
-                        BoxDecoration(color: Colors.grey, shape: BoxShape.circle
-                            // borderRadius: BorderRadius.all(Radius.circular(
-                            //     MediaQuery.of(context).size.width * 100))
-                            ),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: MediaQuery.of(context).size.width * 0.14,
+                    //padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white,
+                        )
+                        // borderRadius: BorderRadius.all(Radius.circular(
+                        //     MediaQuery.of(context).size.width * 100))
+                        ),
+                    // child: Icon(
+                    //   Icons.person,
+                    //   color: Colors.white,
+                    //   size: MediaQuery.of(context).size.width * 0.14,
+                    // ),
+                    child: Text(
+                      name.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.09,
+                      ),
                     ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.02,
                   ),
                   Container(
                     //width: MediaQuery.of(context).size.width / 3,
@@ -126,12 +141,15 @@ class _NavigationState extends State<Navigation> {
                                               email: userEmail,
                                               phone: userPhoneNumber,
                                               userId: userId))).then((value) {
-                                    print("Value..." +
-                                        value["firstName"].toString());
+                                    print("Value..." + value.toString());
                                     setState(() {
                                       firstName = value["firstName"].toString();
                                       lastName = value["lastName"].toString();
                                       userName = firstName + " " + lastName;
+                                      name = firstName
+                                              .toString()
+                                              .substring(0, 1) +
+                                          lastName.toString().substring(0, 1);
                                     });
                                   }),
                                   child: Icon(
@@ -324,7 +342,11 @@ class _NavigationState extends State<Navigation> {
       firstName = pref.getString("firstName");
       lastName = pref.getString("lastName");
       userId = pref.getString("userId");
-
+      // var frst = firstName.toString().substring(0, 1);
+      // var last = lastName.toString().substring(0, 1);
+      name = firstName.toString().substring(0, 1) +
+          lastName.toString().substring(0, 1);
+      print("frst.." + name.toString());
       setState(() {
         userName = firstName + " " + lastName;
         userEmail = pref.getString("email");
@@ -399,7 +421,7 @@ class _NavigationState extends State<Navigation> {
       print("terms..." + response.data.toString());
       terms = response.data["respData"]["terms"];
       privacy = response.data["respData"]["privacy"];
-      
+
       print("terms...0..." + terms.toString());
       print("terms...0..." + privacy.toString());
     } on DioError catch (e) {
