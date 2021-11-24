@@ -17,13 +17,30 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'NewModel.dart';
 
 class ViewDetails extends StatefulWidget {
-  var itModelList, itModelTitle, itModelDescription, itModelAmount;
+  var itModelList,
+      itModelTitle,
+      itModelDescription,
+      itModelAmount,
+      itModelDuration,
+      itModelPaymentBreakup,
+      itModelFirstInstallment,
+      itModelSecondInstallment,
+      itModelFirstInstallmentAmount,
+      itModelSecondInstallmentAmount;
+  //RespData itModelDetails;
   double gst, tds, royalty;
   ViewDetails(
       {this.itModelList,
       this.itModelTitle,
       this.itModelDescription,
       this.itModelAmount,
+      this.itModelDuration,
+      this.itModelPaymentBreakup,
+      this.itModelFirstInstallment,
+      this.itModelSecondInstallment,
+      this.itModelFirstInstallmentAmount,
+      this.itModelSecondInstallmentAmount,
+      //this.itModelDetails,
       this.gst,
       this.tds,
       this.royalty,
@@ -49,6 +66,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   bool buyBtnShow = true;
   String paymentStatus = "null";
   String paymentId = "null";
+  String installmentSerial;
   static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
   @override
@@ -70,6 +88,8 @@ class _ViewDetailsState extends State<ViewDetails> {
   @override
   Widget build(BuildContext context) {
     print("modelId..." + widget.itModelDescription.length.toString());
+    //print("modelId...0.." + widget.itModelDetails.toString());
+
     return Scaffold(
       // appBar: AppBar(
       //   backgroundColor: AppColors.bgColor,
@@ -146,7 +166,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                           widget.itModelDescription.length > 700
                               ? Container(
                                   height:
-                                      MediaQuery.of(context).size.width * 0.85,
+                                      MediaQuery.of(context).size.width * 0.65,
                                   child: ListView(
                                     shrinkWrap: true,
                                     padding: EdgeInsets.all(0),
@@ -190,13 +210,93 @@ class _ViewDetailsState extends State<ViewDetails> {
                           Text(
                             //"Project Price: ${responseData["amount"]} INR",
                             "Project Price: ${widget.itModelAmount} INR",
-
                             style: TextStyle(
-                                color: AppColors.bgColor,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.04,
-                                fontWeight: FontWeight.bold),
+                              color: AppColors.bgColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                            ),
                           ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.width * 0.05,
+                          ),
+                          widget.itModelPaymentBreakup != "2"
+                              ? SizedBox()
+                              : Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Price Break up",
+                                          style: TextStyle(
+                                              color: AppColors.bgColor,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04,
+                                              fontWeight: FontWeight.bold)),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                'First Installment(${widget.itModelFirstInstallment} %): ',
+                                            style: TextStyle(
+                                                //fontWeight: FontWeight.bold,
+                                                color: installmentSerial ==
+                                                            "1" ||
+                                                        installmentSerial == "2"
+                                                    ? Colors.grey
+                                                    : Colors.black)),
+                                        TextSpan(
+                                            text:
+                                                '${widget.itModelFirstInstallmentAmount} INR',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: installmentSerial ==
+                                                            "1" ||
+                                                        installmentSerial == "2"
+                                                    ? Colors.grey
+                                                    : AppColors
+                                                        .transactionDarkGreen))
+                                      ])),
+                                      // Text(
+                                      //     "First Installment(${widget.itModelFirstInstallment} %): ${widget.itModelFirstInstallmentAmount} INR"),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                'Last Installment(${widget.itModelSecondInstallment} %): ',
+                                            style: TextStyle(
+                                                //fontWeight: FontWeight.bold,
+                                                color: installmentSerial == "1"
+                                                    ? AppColors
+                                                        .transactionDarkGreen
+                                                    : Colors.grey)),
+                                        TextSpan(
+                                            text:
+                                                '${widget.itModelSecondInstallmentAmount} INR',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: installmentSerial == "1"
+                                                    ? AppColors
+                                                        .transactionDarkGreen
+                                                    : Colors.grey))
+                                      ])),
+                                      // Text(
+                                      //     "Last Installment(${widget.itModelSecondInstallment} %): ${widget.itModelSecondInstallmentAmount} INR")
+                                    ],
+                                  ),
+                                ),
                           SizedBox(
                             height: MediaQuery.of(context).size.width * 0.08,
                           ),
@@ -214,7 +314,11 @@ class _ViewDetailsState extends State<ViewDetails> {
                                     alignment: Alignment.center,
                                     child: TextButton(
                                       child: Text(
-                                        "Buy Now",
+                                        widget.itModelPaymentBreakup != "2"
+                                            ? "Buy Now"
+                                            : installmentSerial == "1"
+                                                ? "Pay Last Installment"
+                                                : "Pay First Installment",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
@@ -298,15 +402,23 @@ class _ViewDetailsState extends State<ViewDetails> {
       //     response1[0].data["message"].toString());
 
       buyBtnShowSuccess = response1[0].data["success"];
+
       //responseSuccess = response1[1].data["success"];
       //responseData = response1[1].data["respData"];
       //print("responseSuccess..." + responseSuccess.toString());
       print("responseSuccess..." + buyBtnShowSuccess.toString());
       if (buyBtnShowSuccess == 1) {
+        installmentSerial = response1[0].data["respData"]["installment_serial"];
+        print("Installment..." + installmentSerial.toString());
+        if (installmentSerial == "2" || installmentSerial == "0") {
+          setState(() {
+            buyBtnShow = false;
+          });
+        }
         setState(() {
-          buyBtnShow = false;
           pageLoad = true;
         });
+
         //showCustomToast(response1[1].data["respData"]["message"].toString());
       } else {
         setState(() {
@@ -321,9 +433,9 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   _buyItProject() async {
-    print("user_id..." + userId.toString());
-    print("user_id..." + widget.itModelList.toString());
-    print("user_id..." + widget.itModelAmount.toString());
+    // print("user_id..." + userId.toString());
+    // print("user_id..." + widget.itModelList.toString());
+    // print("user_id..." + widget.itModelAmount.toString());
 
     try {
       // var boughtProject = FormData.fromMap({
@@ -377,9 +489,25 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   void openCheckout(String key) async {
-    newGst = double.parse(widget.itModelAmount.toString()) * (widget.gst / 100);
-    newTds = double.parse(widget.itModelAmount.toString()) * (widget.tds / 100);
-    newTotal = newGst + newTds + double.parse(widget.itModelAmount.toString());
+    newGst = double.parse(widget.itModelPaymentBreakup != "2"
+            ? widget.itModelAmount.toString()
+            : installmentSerial == "1"
+                ? widget.itModelSecondInstallmentAmount.toString()
+                : widget.itModelFirstInstallmentAmount.toString()) *
+        (widget.gst / 100);
+    newTds = double.parse(widget.itModelPaymentBreakup != "2"
+            ? widget.itModelAmount.toString()
+            : installmentSerial == "1"
+                ? widget.itModelSecondInstallmentAmount.toString()
+                : widget.itModelFirstInstallmentAmount.toString()) *
+        (widget.tds / 100);
+    newTotal = newGst +
+        newTds +
+        double.parse(widget.itModelPaymentBreakup != "2"
+            ? widget.itModelAmount.toString()
+            : installmentSerial == "1"
+                ? widget.itModelSecondInstallmentAmount.toString()
+                : widget.itModelFirstInstallmentAmount.toString());
     var price = newTotal.toStringAsFixed(2).split(".");
     print("It Price..." + widget.gst.toString());
     print("It Price..." + widget.tds.toString());
@@ -438,16 +566,16 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   _confirmBuy() async {
-    print("It Price...0.." + userId.toString());
-    print("It Price...0.." + widget.itModelList.toString());
-    print("It Price...0.." + widget.itModelAmount.toString());
-    print("It Price...0.." + paymentStatus.toString());
-    print("It Price...0.." + paymentId.toString());
-    print("It Price...0.." + widget.gst.toString());
-    print("It Price...0.." + newGst.toString());
-    print("It Price...0.." + widget.tds.toString());
-    print("It Price...0.." + newTds.toString());
-    print("It Price...0.." + (grandTotal / 100).toString());
+    // print("It Price...0.." + userId.toString());
+    // print("It Price...0.." + widget.itModelList.toString());
+    // print("It Price...0.." + widget.itModelAmount.toString());
+    // print("It Price...0.." + paymentStatus.toString());
+    // print("It Price...0.." + paymentId.toString());
+    // print("It Price...0.." + widget.gst.toString());
+    // print("It Price...0.." + newGst.toString());
+    // print("It Price...0.." + widget.tds.toString());
+    // print("It Price...0.." + newTds.toString());
+    // print("It Price...0.." + (grandTotal / 100).toString());
     try {
       var boughtProject = FormData.fromMap({
         "oAuth_json": json.encode({
@@ -460,13 +588,45 @@ class _ViewDetailsState extends State<ViewDetails> {
           "amount": widget.itModelAmount.toString(),
           "payment_status": paymentStatus,
           "payment_id": paymentId,
+          "payment_breakup": widget.itModelPaymentBreakup.toString(),
           "gst_per": widget.gst.toString(),
           "gst_rate": newGst.toString(),
           "tds_per": widget.tds.toString(),
           "tds_rate": newTds.toString(),
-          "grand_total": (grandTotal / 100).toString()
+          "grand_total": (grandTotal / 100).toString(),
+          "installment_serial": buyBtnShowSuccess == 0
+              ? "1"
+              : installmentSerial == "1"
+                  ? "2"
+                  : "0",
+          "first_installment_per": widget.itModelFirstInstallment,
+          "last_installment_per": widget.itModelSecondInstallment,
+          "first_installment_amt": widget.itModelFirstInstallmentAmount,
+          "last_installment_amt": widget.itModelSecondInstallmentAmount
         })
       });
+      print(json.encode({
+        "user_id": userId.toString(),
+        "it_proj_id": widget.itModelList.toString(),
+        "amount": widget.itModelAmount.toString(),
+        "payment_status": paymentStatus,
+        "payment_id": paymentId,
+        "payment_breakup": widget.itModelPaymentBreakup.toString(),
+        "gst_per": widget.gst.toString(),
+        "gst_rate": newGst.toString(),
+        "tds_per": widget.tds.toString(),
+        "tds_rate": newTds.toString(),
+        "grand_total": (grandTotal / 100).toString(),
+        "installment_serial": buyBtnShowSuccess == 0
+            ? "1"
+            : installmentSerial == "1"
+                ? "2"
+                : "0",
+        "first_installment_per": widget.itModelFirstInstallment,
+        "last_installment_per": widget.itModelSecondInstallment,
+        "first_installment_amt": widget.itModelFirstInstallmentAmount,
+        "last_installment_amt": widget.itModelSecondInstallmentAmount
+      }));
       var _confirm =
           await dio.post(Consts.USER_BUY_IT_PROJECT, data: boughtProject);
       print("Confirm It...");

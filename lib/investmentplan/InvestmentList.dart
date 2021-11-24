@@ -145,6 +145,7 @@ class _InvestmentListState extends State<InvestmentList> {
         dio.post(Consts.INVESTMENT_BY_USER, data: investmentData),
         dio.post(Consts.TERMS_CONDITIONS, data: investmentData1)
       ]);
+      print("investment recoed..." + response[1].data["respData"].toString());
       gst = double.parse(response[1].data["respData"]["gst"]);
       tds = double.parse(response[1].data["respData"]["tds"]);
       royalty = double.parse(response[1].data["respData"]["royalty"]);

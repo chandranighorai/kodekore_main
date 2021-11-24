@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 class Consts {
   static double shapeHeight = 180.0;
-  static String SITE_URL = "http://182.75.124.211/kodecore/";
+  static String SITE_URL = "https://kodecore.com/app/";
+  //static String SITE_URL = "http://182.75.124.211/kodecore/";
   static String APP_URL = SITE_URL + "api/";
   static String REGISTRATION = APP_URL + "register";
   static String REGISTRATION_OTP_VERIFICATION =

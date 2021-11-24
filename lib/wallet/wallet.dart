@@ -650,57 +650,61 @@ class _WalletState extends State<Wallet> {
                                           ),
                                           //Spacer(),
                                           Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  bool validation =
-                                                      _fieldCheck();
-                                                  print("validation..." +
-                                                      validation.toString());
-                                                  if (validation) {
-                                                    // _redeemRequest();
-                                                    _keyGenerate();
-                                                  }
-                                                },
-                                                child: Container(
-                                                    alignment: Alignment.center,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3,
-                                                    padding: EdgeInsets.only(
-                                                      top:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.03,
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.03,
-                                                      left:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.03,
-                                                      right:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.03,
-                                                    ),
-                                                    color:
-                                                        AppColors.buttonColor,
-                                                    child: Text(
-                                                      "Redeem",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                              ),
-                                              Spacer(),
+                                              // InkWell(
+                                              //   onTap: () {
+                                              //     bool validation =
+                                              //         _fieldCheck();
+                                              //     print("validation..." +
+                                              //         validation.toString());
+                                              //     if (validation) {
+                                              //       // _redeemRequest();
+                                              //       _keyGenerate();
+                                              //     }
+                                              //   },
+                                              //   child: Container(
+                                              //       alignment: Alignment.center,
+                                              //       width:
+                                              //           MediaQuery.of(context)
+                                              //                   .size
+                                              //                   .width /
+                                              //               3,
+                                              //       padding: EdgeInsets.only(
+                                              //         top:
+                                              //             MediaQuery.of(context)
+                                              //                     .size
+                                              //                     .width *
+                                              //                 0.03,
+                                              //         bottom:
+                                              //             MediaQuery.of(context)
+                                              //                     .size
+                                              //                     .width *
+                                              //                 0.03,
+                                              //         left:
+                                              //             MediaQuery.of(context)
+                                              //                     .size
+                                              //                     .width *
+                                              //                 0.03,
+                                              //         right:
+                                              //             MediaQuery.of(context)
+                                              //                     .size
+                                              //                     .width *
+                                              //                 0.03,
+                                              //       ),
+                                              //       color:
+                                              //           AppColors.buttonColor,
+                                              //       child: Text(
+                                              //         "Redeem",
+                                              //         style: TextStyle(
+                                              //             fontWeight:
+                                              //                 FontWeight.bold),
+                                              //       )),
+                                              // ),
+                                              //Spacer(),
                                               InkWell(
                                                 onTap: () {
                                                   bool validation =
@@ -711,11 +715,16 @@ class _WalletState extends State<Wallet> {
                                                 },
                                                 child: Container(
                                                     alignment: Alignment.center,
+                                                    // width:
+                                                    //     MediaQuery.of(context)
+                                                    //             .size
+                                                    //             .width /
+                                                    //         3,
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width /
-                                                            3,
+                                                            2,
                                                     padding: EdgeInsets.only(
                                                       top:
                                                           MediaQuery.of(context)

@@ -26,6 +26,7 @@ class InvestmentPlanList extends StatefulWidget {
 class _InvestmentPlanListState extends State<InvestmentPlanList> {
   @override
   Widget build(BuildContext context) {
+    print("tds..." + widget.tds.toString());
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -37,7 +38,7 @@ class _InvestmentPlanListState extends State<InvestmentPlanList> {
                     invPlanDesc: widget.invesmentList.description,
                     invPlanAmount: widget.invesmentList.returnRate,
                     userId: widget.userId,
-                    gst:widget.gst,
+                    gst: widget.gst,
                     tds: widget.tds,
                     royalty: widget.royalty)));
       },

@@ -75,8 +75,8 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                           sortAscending: _isAscending,
                           headingRowColor: MaterialStateColor.resolveWith(
                               (states) => AppColors.buttonColor),
-                          // dataRowHeight:
-                          //     MediaQuery.of(context).size.width * 0.14,
+                          dataRowHeight:
+                              MediaQuery.of(context).size.width * 0.16,
                           columns: <DataColumn>[
                             DataColumn(
                                 label: Text(
@@ -85,7 +85,7 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                       fontWeight: FontWeight.bold,
                                       fontSize:
                                           MediaQuery.of(context).size.width *
-                                              0.038),
+                                              0.05),
                                 ),
                                 onSort: (columnIndex, _) {
                                   setState(() {
@@ -109,24 +109,24 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                               "Description",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width *
-                                      0.038),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05),
                             )),
                             DataColumn(
                                 label: Text(
                               "Amt(INR)",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width *
-                                      0.038),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05),
                             )),
                             DataColumn(
                                 label: Text(
                               "Action",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width *
-                                      0.038),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.05),
                             ))
                           ],
                           // rows: const <DataRow>[
@@ -152,24 +152,38 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                 cells: [
                                   DataCell(Container(
                                     width:
-                                        MediaQuery.of(context).size.width * 0.2,
+                                        MediaQuery.of(context).size.width * 0.3,
                                     //color: Colors.red,
                                     child: Text(
                                       items["date"],
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
                                     ),
                                   )),
                                   DataCell(Container(
                                     width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                        MediaQuery.of(context).size.width * 0.7,
                                     child: Text(
                                       items["description"],
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
                                     ),
                                   )),
                                   DataCell(Text(
-                                    items["amount"] + " CR",
-                                    style: TextStyle(color: Colors.white),
+                                    items["amount"],
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
                                   )),
                                   DataCell(
                                       Icon(
@@ -370,8 +384,8 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
   }
 
   _gettingList(var modelList) {
-    print("ModelList..." + modelList.toString());
-    print("ModelList..." + modelList[0]["filepath"].toString());
+    // print("ModelList..." + modelList.toString());
+    // print("ModelList..." + modelList[0]["filepath"].toString());
 
     for (int i = 0; i < modelList.length; i++) {
       // var date = modelList[i]["dtime"] == null
@@ -386,9 +400,9 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
         "description": modelList[i]["project_title"] == null
             ? "null"
             : modelList[i]["project_title"],
-        "amount": modelList[i]["project_amount"] == null
+        "amount": modelList[i]["received_amount"] == null
             ? "null"
-            : modelList[i]["project_amount"],
+            : modelList[i]["received_amount"],
         "path": modelList[i]["filepath"]
       };
 

@@ -187,7 +187,7 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                         ),
                                       )),
                                       DataCell(Text(
-                                        items["amount"] + " CR",
+                                        items["amount"],
                                         style: TextStyle(color: Colors.white),
                                       )),
                                       DataCell(

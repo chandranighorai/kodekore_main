@@ -203,7 +203,7 @@ class _CryptoTableState extends State<CryptoTable> {
                                         ),
                                       )),
                                       DataCell(Text(
-                                        items["amount"] + " CR",
+                                        items["amount"],
                                         style: TextStyle(color: Colors.white),
                                       )),
                                       DataCell(

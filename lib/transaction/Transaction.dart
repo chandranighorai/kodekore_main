@@ -20,6 +20,8 @@ class Transaction extends StatefulWidget {
 class _TransactionState extends State<Transaction> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
   var transactionList = ["IT Projects", "Investment Plans", "Cryptocurrency"];
+  //var transactionList = ["Investment Plans", "Cryptocurrency"];
+
   @override
   Widget build(BuildContext context) {
     print("..." + transactionList.length.toString());

@@ -26,7 +26,7 @@ class _ItModelListState extends State<ItModelList> {
 
   @override
   Widget build(BuildContext context) {
-    //print("modelDesc..." + widget.itModelList.toString());
+    print("modelDesc..." + widget.itModelList.toString());
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -37,6 +37,17 @@ class _ItModelListState extends State<ItModelList> {
                     itModelTitle: widget.itModelList.title,
                     itModelDescription: widget.itModelList.description,
                     itModelAmount: widget.itModelList.amount,
+                    itModelDuration: widget.itModelList.duration,
+                    itModelPaymentBreakup: widget.itModelList.paymentBreakup,
+                    //itModelInstallmentSerial: widget.itModelList.
+                    itModelFirstInstallment:
+                        widget.itModelList.s1stInstallmentPer,
+                    itModelSecondInstallment:
+                        widget.itModelList.lastInstallmentPer,
+                    itModelFirstInstallmentAmount:
+                        widget.itModelList.firstInstallmentAmt,
+                    itModelSecondInstallmentAmount:
+                        widget.itModelList.lastInstallmentAmt,
                     gst: widget.gst,
                     tds: widget.tds,
                     royalty: widget.royalty)));

@@ -286,16 +286,16 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   // }
 
   _investNow() async {
-    print("It Price...0.." + widget.userId.toString());
-    print("It Price...0.." + widget.invPlanId.toString());
-    print("It Price...0.." + amount.text.toString());
-    print("It Price...0.." + paymentStatus.toString());
-    print("It Price...0.." + paymentId.toString());
-    print("It Price...0.." + widget.gst.toString());
-    print("It Price...0.." + newGst.toString());
-    print("It Price...0.." + widget.tds.toString());
-    print("It Price...0.." + newTds.toString());
-    print("It Price...0.." + (grandTotal / 100).toString());
+    // print("It Price...0.." + widget.userId.toString());
+    // print("It Price...0.." + widget.invPlanId.toString());
+    // print("It Price...0.." + amount.text.toString());
+    // print("It Price...0.." + paymentStatus.toString());
+    // print("It Price...0.." + paymentId.toString());
+    // print("It Price...0.." + widget.gst.toString());
+    // print("It Price...0.." + newGst.toString());
+    // print("It Price...0.." + widget.tds.toString());
+    // print("It Price...0.." + newTds.toString());
+    // print("It Price...0.." + (grandTotal / 100).toString());
     try {
       if (amount.text.length == 0) {
         showCustomToast("Enter amount");
@@ -382,6 +382,7 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
 
   openCheckOut(String keyString) async {
     print("KeyString..." + keyString.toString());
+    print("KeyString..." + widget.tds.toString());
     newGst = double.parse(amount.text.toString()) * (widget.gst / 100);
     newTds = double.parse(amount.text.toString()) * (widget.tds / 100);
     newTotal = newGst + newTds + double.parse(amount.text.toString());

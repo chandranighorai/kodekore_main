@@ -134,7 +134,11 @@ class _CryptoCurrencyState extends State<CryptoCurrency> {
                               itemBuilder: (context, int index) {
                                 RespData cryptoData = cryptoCurrency[index];
                                 return CryptoCurrencyList(
-                                    cryptoDataList: cryptoData, userId: userId,gst:gst,tds:tds,royalty:royalty);
+                                    cryptoDataList: cryptoData,
+                                    userId: userId,
+                                    gst: gst,
+                                    tds: tds,
+                                    royalty: royalty);
                               });
                     } else {
                       return Center(
