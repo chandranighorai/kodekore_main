@@ -106,6 +106,7 @@ class _KYCState extends State<KYC> {
 
   @override
   Widget build(BuildContext context) {
+    //GlobalKey<ScaffoldState> scaffFoldState = new GlobalKey<ScaffoldState>();
     //print("pro..." + widget.regData1.bankName);
     return Scaffold(
       body: Container(
@@ -117,6 +118,16 @@ class _KYCState extends State<KYC> {
         child: Stack(
           children: [
             ShapeComponent(context, Consts.shapeHeight),
+            Positioned(
+              top: MediaQuery.of(context).size.width * 0.06,
+              left: MediaQuery.of(context).size.width * 0.03,
+              child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  )),
+            ),
             Positioned(
               top: MediaQuery.of(context).size.width * 0.4,
               child: Container(

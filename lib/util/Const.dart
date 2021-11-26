@@ -36,4 +36,5 @@ class Consts {
   static String WITHDRAWAL = APP_URL + "withdrawal-request";
   static String PAYMENT_KEYS = APP_URL + "payment-keys";
   static String update_kyc = APP_URL + "update-kyc";
+  static String IT_PAYOUT = APP_URL + "it-project-payouts";
 }

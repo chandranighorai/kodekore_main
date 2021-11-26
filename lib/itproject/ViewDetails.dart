@@ -53,7 +53,7 @@ class ViewDetails extends StatefulWidget {
 
 class _ViewDetailsState extends State<ViewDetails> {
   //GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
-  double newTotal, newGst, newTds;
+  double newTotal, newGst, newTds, newRoyalty;
   int grandTotal;
   var userId, userEmail, userphone;
   var dio = Dio();
@@ -166,7 +166,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                           widget.itModelDescription.length > 700
                               ? Container(
                                   height:
-                                      MediaQuery.of(context).size.width * 0.65,
+                                      MediaQuery.of(context).size.width * 0.6,
                                   child: ListView(
                                     shrinkWrap: true,
                                     padding: EdgeInsets.all(0),
@@ -218,6 +218,29 @@ class _ViewDetailsState extends State<ViewDetails> {
                             ),
                           ),
                           SizedBox(
+                            height: MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          // Text(
+                          //     "4.2.1. Users can choose a suitable investment plan from the multiple plans given by the admin while creating a plan from admin."),
+                          // SizedBox(
+                          //   height: MediaQuery.of(context).size.width * 0.04,
+                          // ),
+                          // Text(
+                          //     "4.2.1. Users can choose a suitable investment plan from the multiple plans given by the admin while creating a plan from admin."),
+                          // SizedBox(
+                          //   height: MediaQuery.of(context).size.width * 0.06,
+                          // ),
+                          Text(
+                            //"Project Price: ${responseData["amount"]} INR",
+                            "Duration: ${widget.itModelDuration} Month",
+                            style: TextStyle(
+                              color: AppColors.bgColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                            ),
+                          ),
+                          SizedBox(
                             height: MediaQuery.of(context).size.width * 0.05,
                           ),
                           widget.itModelPaymentBreakup != "2"
@@ -244,7 +267,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                           text: TextSpan(children: [
                                         TextSpan(
                                             text:
-                                                'First Installment(${widget.itModelFirstInstallment} %): ',
+                                                'LOI(${widget.itModelFirstInstallment} %): ',
                                             style: TextStyle(
                                                 //fontWeight: FontWeight.bold,
                                                 color: installmentSerial ==
@@ -275,7 +298,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                           text: TextSpan(children: [
                                         TextSpan(
                                             text:
-                                                'Last Installment(${widget.itModelSecondInstallment} %): ',
+                                                'Rest(${widget.itModelSecondInstallment} %): ',
                                             style: TextStyle(
                                                 //fontWeight: FontWeight.bold,
                                                 color: installmentSerial == "1"
@@ -317,8 +340,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                         widget.itModelPaymentBreakup != "2"
                                             ? "Buy Now"
                                             : installmentSerial == "1"
-                                                ? "Pay Last Installment"
-                                                : "Pay First Installment",
+                                                ? "Pay Rest Amount"
+                                                : "Pay LOI Amount",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
@@ -495,30 +518,44 @@ class _ViewDetailsState extends State<ViewDetails> {
                 ? widget.itModelSecondInstallmentAmount.toString()
                 : widget.itModelFirstInstallmentAmount.toString()) *
         (widget.gst / 100);
-    newTds = double.parse(widget.itModelPaymentBreakup != "2"
-            ? widget.itModelAmount.toString()
-            : installmentSerial == "1"
-                ? widget.itModelSecondInstallmentAmount.toString()
-                : widget.itModelFirstInstallmentAmount.toString()) *
-        (widget.tds / 100);
-    newTotal = newGst +
-        newTds +
+    // newTds = double.parse(widget.itModelPaymentBreakup != "2"
+    //         ? widget.itModelAmount.toString()
+    //         : installmentSerial == "1"
+    //             ? widget.itModelSecondInstallmentAmount.toString()
+    //             : widget.itModelFirstInstallmentAmount.toString()) *
+    //     (widget.tds / 100);
+    // newRoyalty = double.parse(widget.itModelPaymentBreakup != "2"
+    //         ? widget.itModelAmount.toString()
+    //         : installmentSerial == "1"
+    //             ? widget.itModelSecondInstallmentAmount.toString()
+    //             : widget.itModelFirstInstallmentAmount.toString()) *
+    //     (widget.royalty / 100);
+    // newTotal = (newGst +
+    //         newTds +
+    //         double.parse(widget.itModelPaymentBreakup != "2"
+    //             ? widget.itModelAmount.toString()
+    //             : installmentSerial == "1"
+    //                 ? widget.itModelSecondInstallmentAmount.toString()
+    //                 : widget.itModelFirstInstallmentAmount.toString())) -
+    //     newRoyalty;
+    newTotal = (newGst +
         double.parse(widget.itModelPaymentBreakup != "2"
             ? widget.itModelAmount.toString()
             : installmentSerial == "1"
                 ? widget.itModelSecondInstallmentAmount.toString()
-                : widget.itModelFirstInstallmentAmount.toString());
+                : widget.itModelFirstInstallmentAmount.toString()));
     var price = newTotal.toStringAsFixed(2).split(".");
-    print("It Price..." + widget.gst.toString());
-    print("It Price..." + widget.tds.toString());
-    print("It Price..." + newGst.toString());
-    print("It Price..." + newTds.toString());
-    print("It Price..." + newTotal.toString());
-    print("It Price..." + price.toString());
+    print("It Price...gst..." + widget.gst.toString());
+    // print("It Price...tds..." + widget.tds.toString());
+    print("It Price...gst..." + newGst.toString());
+    // print("It Price...newTds..." + newTds.toString());
+    // print("It Price...newRoyalty..." + newRoyalty.toString());
+    print("It Price...newTotal..." + newTotal.toString());
+    print("It Price...price..." + price.toString());
     print("It Price..." +
         ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
-    print("It Price..." + grandTotal.toString());
+    print("It Price...grandTotal..." + grandTotal.toString());
     var options = {
       'key': key.toString(),
       'amount': grandTotal.toString(),
@@ -568,7 +605,13 @@ class _ViewDetailsState extends State<ViewDetails> {
   _confirmBuy() async {
     // print("It Price...0.." + userId.toString());
     // print("It Price...0.." + widget.itModelList.toString());
-    // print("It Price...0.." + widget.itModelAmount.toString());
+    print("It Price...0.." +
+        double.parse(widget.itModelPaymentBreakup != "2"
+                ? widget.itModelAmount.toString()
+                : installmentSerial == "1"
+                    ? widget.itModelSecondInstallmentAmount.toString()
+                    : widget.itModelFirstInstallmentAmount.toString())
+            .toString());
     // print("It Price...0.." + paymentStatus.toString());
     // print("It Price...0.." + paymentId.toString());
     // print("It Price...0.." + widget.gst.toString());
@@ -585,7 +628,11 @@ class _ViewDetailsState extends State<ViewDetails> {
         "jsonParam": json.encode({
           "user_id": userId.toString(),
           "it_proj_id": widget.itModelList.toString(),
-          "amount": widget.itModelAmount.toString(),
+          "amount": double.parse(widget.itModelPaymentBreakup != "2"
+              ? widget.itModelAmount.toString()
+              : installmentSerial == "1"
+                  ? widget.itModelSecondInstallmentAmount.toString()
+                  : widget.itModelFirstInstallmentAmount.toString()),
           "payment_status": paymentStatus,
           "payment_id": paymentId,
           "payment_breakup": widget.itModelPaymentBreakup.toString(),
@@ -593,6 +640,8 @@ class _ViewDetailsState extends State<ViewDetails> {
           "gst_rate": newGst.toString(),
           "tds_per": widget.tds.toString(),
           "tds_rate": newTds.toString(),
+          "royalty_per": widget.royalty,
+          "royalty_rate": newRoyalty.toString(),
           "grand_total": (grandTotal / 100).toString(),
           "installment_serial": buyBtnShowSuccess == 0
               ? "1"
@@ -605,28 +654,28 @@ class _ViewDetailsState extends State<ViewDetails> {
           "last_installment_amt": widget.itModelSecondInstallmentAmount
         })
       });
-      print(json.encode({
-        "user_id": userId.toString(),
-        "it_proj_id": widget.itModelList.toString(),
-        "amount": widget.itModelAmount.toString(),
-        "payment_status": paymentStatus,
-        "payment_id": paymentId,
-        "payment_breakup": widget.itModelPaymentBreakup.toString(),
-        "gst_per": widget.gst.toString(),
-        "gst_rate": newGst.toString(),
-        "tds_per": widget.tds.toString(),
-        "tds_rate": newTds.toString(),
-        "grand_total": (grandTotal / 100).toString(),
-        "installment_serial": buyBtnShowSuccess == 0
-            ? "1"
-            : installmentSerial == "1"
-                ? "2"
-                : "0",
-        "first_installment_per": widget.itModelFirstInstallment,
-        "last_installment_per": widget.itModelSecondInstallment,
-        "first_installment_amt": widget.itModelFirstInstallmentAmount,
-        "last_installment_amt": widget.itModelSecondInstallmentAmount
-      }));
+      // print(json.encode({
+      //   "user_id": userId.toString(),
+      //   "it_proj_id": widget.itModelList.toString(),
+      //   "amount": widget.itModelAmount.toString(),
+      //   "payment_status": paymentStatus,
+      //   "payment_id": paymentId,
+      //   "payment_breakup": widget.itModelPaymentBreakup.toString(),
+      //   "gst_per": widget.gst.toString(),
+      //   "gst_rate": newGst.toString(),
+      //   "tds_per": widget.tds.toString(),
+      //   "tds_rate": newTds.toString(),
+      //   "grand_total": (grandTotal / 100).toString(),
+      //   "installment_serial": buyBtnShowSuccess == 0
+      //       ? "1"
+      //       : installmentSerial == "1"
+      //           ? "2"
+      //           : "0",
+      //   "first_installment_per": widget.itModelFirstInstallment,
+      //   "last_installment_per": widget.itModelSecondInstallment,
+      //   "first_installment_amt": widget.itModelFirstInstallmentAmount,
+      //   "last_installment_amt": widget.itModelSecondInstallmentAmount
+      // }));
       var _confirm =
           await dio.post(Consts.USER_BUY_IT_PROJECT, data: boughtProject);
       print("Confirm It...");

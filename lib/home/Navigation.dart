@@ -7,6 +7,7 @@ import 'package:kode_core/Util/AppColors.dart';
 import 'package:kode_core/cryptocurrency/CryptoCurrency.dart';
 import 'package:kode_core/investmentplan/InvestmentList.dart';
 import 'package:kode_core/itproject/ItProjectList.dart';
+import 'package:kode_core/itprojectpayout/ItProjectPayout.dart';
 import 'package:kode_core/login/Login.dart';
 import 'package:kode_core/profile/EditProfile.dart';
 import 'package:kode_core/terms&conditions/Terms.dart';
@@ -243,6 +244,25 @@ class _NavigationState extends State<Navigation> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Transaction("Transections"))),
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    title: Text(
+                      "IT Projects Payout",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: MediaQuery.of(context).size.width * 0.04),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ItProjectPayout("IT Project Payout")));
+                    },
                   ),
                   Divider(
                     color: Colors.grey,
