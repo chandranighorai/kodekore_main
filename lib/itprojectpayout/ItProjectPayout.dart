@@ -34,6 +34,8 @@ class _ItProjectPayoutState extends State<ItProjectPayout> {
 
   @override
   Widget build(BuildContext context) {
+    int _currentSortColumn = 0;
+    bool _isAscending = true;
     return Scaffold(
       key: scaffFoldState,
       drawer: Navigation(),
@@ -63,7 +65,11 @@ class _ItProjectPayoutState extends State<ItProjectPayout> {
                     ? Center(
                         child: Text(response.data["message"]),
                       )
-                    : ItPayoutList(payoutList: respData)
+                    : ItPayoutList(
+                        contextData: context,
+                        payoutList: respData,
+                        currentSortColumn: _currentSortColumn,
+                        isAscending: _isAscending)
           ],
         ),
       ),
@@ -81,7 +87,7 @@ class _ItProjectPayoutState extends State<ItProjectPayout> {
         }),
         "jsonParam": jsonEncode({"user_id": userId.toString()})
       });
-      var response = await dio.post(Consts.IT_PAYOUT, data: formData);
+      response = await dio.post(Consts.IT_PAYOUT, data: formData);
       //var resData = json.decode(response.data);
       print(
           "ResponseData..." + response.data["success"].runtimeType.toString());

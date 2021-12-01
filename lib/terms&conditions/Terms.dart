@@ -58,8 +58,9 @@ class _TermsState extends State<Terms> {
                         data: widget.content,
                         style: {
                           "body": Style(
-                              margin: EdgeInsets.all(0),
-                              padding: EdgeInsets.all(0))
+                            margin: EdgeInsets.all(0),
+                            padding: EdgeInsets.all(0),
+                          )
                         },
                       )
                     ],

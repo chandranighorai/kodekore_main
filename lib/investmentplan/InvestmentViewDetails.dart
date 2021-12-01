@@ -12,13 +12,21 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InvestmentViewDetails extends StatefulWidget {
-  String invPlanId, invPlanTitle, invPlanDesc, invPlanAmount, userId;
+  String invPlanId,
+      invPlanTitle,
+      invPlanDesc,
+      invPlanAmount,
+      invDuration,
+      invAmount,
+      userId;
   double gst, tds, royalty;
   InvestmentViewDetails(
       {this.invPlanId,
       this.invPlanTitle,
       this.invPlanDesc,
       this.invPlanAmount,
+      this.invDuration,
+      this.invAmount,
       this.userId,
       this.gst,
       this.tds,
@@ -133,7 +141,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                                     style: {
                                       "body": Style(
                                           margin: EdgeInsets.all(0),
-                                          padding: EdgeInsets.all(0))
+                                          padding: EdgeInsets.all(0),
+                                          textAlign: TextAlign.justify)
                                     },
                                   )
                                 ],
@@ -144,7 +153,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                               style: {
                                 "body": Style(
                                     margin: EdgeInsets.all(0),
-                                    padding: EdgeInsets.all(0))
+                                    padding: EdgeInsets.all(0),
+                                    textAlign: TextAlign.justify)
                               },
                             ),
                       SizedBox(
@@ -152,6 +162,16 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                       ),
                       Text(
                         "Return Rate: ${widget.invPlanAmount} %",
+                        style: TextStyle(
+                            color: AppColors.bgColor,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      Text(
+                        "Duration: ${widget.invDuration} months",
                         style: TextStyle(
                             color: AppColors.bgColor,
                             fontSize: MediaQuery.of(context).size.width * 0.04,
@@ -173,25 +193,33 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.02,
                           ),
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.09,
-                            width: MediaQuery.of(context).size.width / 2.8,
-                            padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.width * 0.00,
-                                bottom:
-                                    MediaQuery.of(context).size.width * 0.00,
-                                left: MediaQuery.of(context).size.width * 0.01,
-                                right:
-                                    MediaQuery.of(context).size.width * 0.01),
-                            color: Colors.grey[300],
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              controller: amount,
-                              decoration: InputDecoration(
-                                  hintText: "Enter Amount",
-                                  border: InputBorder.none),
-                            ),
-                          ),
+                          Text(
+                            "${widget.invAmount}",
+                            style: TextStyle(
+                                color: AppColors.bgColor,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                fontWeight: FontWeight.bold),
+                          )
+                          // Container(
+                          //   height: MediaQuery.of(context).size.width * 0.09,
+                          //   width: MediaQuery.of(context).size.width / 2.8,
+                          //   padding: EdgeInsets.only(
+                          //       top: MediaQuery.of(context).size.width * 0.00,
+                          //       bottom:
+                          //           MediaQuery.of(context).size.width * 0.00,
+                          //       left: MediaQuery.of(context).size.width * 0.01,
+                          //       right:
+                          //           MediaQuery.of(context).size.width * 0.01),
+                          //   color: Colors.grey[300],
+                          //   child: TextFormField(
+                          //     keyboardType: TextInputType.number,
+                          //     controller: amount,
+                          //     decoration: InputDecoration(
+                          //         hintText: "Enter Amount",
+                          //         border: InputBorder.none),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(
@@ -297,34 +325,34 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     // print("It Price...0.." + newTds.toString());
     // print("It Price...0.." + (grandTotal / 100).toString());
     try {
-      if (amount.text.length == 0) {
-        showCustomToast("Enter amount");
-      } else {
-        var amountData = FormData.fromMap({
-          "oAuth_json": json.encode({
-            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-            "aKey": "3EC5C12E6G34L34ED2E36A9"
-          }),
-          "jsonParam": json.encode({
-            "user_id": widget.userId,
-            "inv_plan_id": widget.invPlanId,
-            "inv_amount": amount.text.toString(),
-            "payment_status": paymentStatus,
-            "payment_id": paymentId,
-            "gst_per": widget.gst.toString(),
-            "gst_rate": newGst.toString(),
-            "tds_per": widget.tds.toString(),
-            "tds_rate": newTds.toString(),
-            "grand_total": (grandTotal / 100).toString()
-          })
-        });
-        var invest =
-            await dio.post(Consts.BUY_INVESTMENT_PLAN, data: amountData);
-        showCustomToast(invest.data["message"]);
-        setState(() {
-          amount.text = "";
-        });
-      }
+      // if (amount.text.length == 0) {
+      //   showCustomToast("Enter amount");
+      // } else {
+      var amountData = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({
+          "user_id": widget.userId,
+          "inv_plan_id": widget.invPlanId,
+          //"inv_amount": amount.text.toString(),
+          "inv_amount": widget.invAmount.toString(),
+          "payment_status": paymentStatus,
+          "payment_id": paymentId,
+          "gst_per": widget.gst.toString(),
+          "gst_rate": newGst.toString(),
+          "tds_per": widget.tds.toString(),
+          "tds_rate": newTds.toString(),
+          "grand_total": (grandTotal / 100).toString()
+        })
+      });
+      var invest = await dio.post(Consts.BUY_INVESTMENT_PLAN, data: amountData);
+      showCustomToast(invest.data["message"]);
+      // setState(() {
+      //   amount.text = "";
+      // });
+      //}
     } on DioError catch (e) {
       print(e.toString());
       showCustomToast("No Network");
@@ -359,41 +387,42 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     userEmail = prefs.getString("email");
 
     try {
-      if (amount.text.length == 0) {
-        showCustomToast("Enter amount");
-      } else {
-        var keydata = FormData.fromMap({
-          "oAuth_json": json.encode({
-            "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-            "aKey": "3EC5C12E6G34L34ED2E36A9"
-          }),
-          "jsonParam": json.encode({})
-        });
-        var keyResponse = await dio.post(Consts.PAYMENT_KEYS, data: keydata);
-        print("Keydata..." + keyResponse.data.toString());
-        if (keyResponse.data["success"] == 1) {
-          openCheckOut(keyResponse.data["respData"]["Key_Id"].toString());
-        }
+      // if (amount.text.length == 0) {
+      //   showCustomToast("Enter amount");
+      // } else {
+      var keydata = FormData.fromMap({
+        "oAuth_json": json.encode({
+          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+          "aKey": "3EC5C12E6G34L34ED2E36A9"
+        }),
+        "jsonParam": json.encode({})
+      });
+      var keyResponse = await dio.post(Consts.PAYMENT_KEYS, data: keydata);
+      print("Keydata..." + keyResponse.data.toString());
+      if (keyResponse.data["success"] == 1) {
+        openCheckOut(keyResponse.data["respData"]["Key_Id"].toString());
       }
+      // }
     } on DioError catch (e) {
       print(e.toString());
     }
   }
 
   openCheckOut(String keyString) async {
-    print("KeyString..." + keyString.toString());
-    print("KeyString..." + widget.tds.toString());
-    newGst = double.parse(amount.text.toString()) * (widget.gst / 100);
-    newTds = double.parse(amount.text.toString()) * (widget.tds / 100);
-    newTotal = newGst + newTds + double.parse(amount.text.toString());
+    // print("KeyString..." + keyString.toString());
+    // print("KeyString..." + widget.tds.toString());
+    //newGst = double.parse(widget.invAmount.toString()) * (widget.gst / 100);
+    //newTds = double.parse(widget.invAmount.toString()) * (widget.tds / 100);
+    //newTotal = newGst + newTds + double.parse(widget.invAmount.toString());
+    newTotal = double.parse(widget.invAmount.toString());
     var price = newTotal.toStringAsFixed(2).split(".");
-    print("It Price..." + widget.gst.toString());
-    print("It Price..." + widget.tds.toString());
-    print("It Price..." + newGst.toString());
-    print("It Price..." + newTds.toString());
-    print("It Price..." + newTotal.toString());
-    print("It Price..." +
-        ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
+    // print("It Price..." + widget.gst.toString());
+    // print("It Price..." + widget.tds.toString());
+    // print("It Price..." + newGst.toString());
+    // print("It Price..." + newTds.toString());
+    // print("It Price..." + newTotal.toString());
+    // print("It Price..." +
+    //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
     var options = {
       'key': keyString,

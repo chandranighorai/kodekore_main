@@ -33,6 +33,8 @@ class RespData {
   String description;
   String summary;
   String returnRate;
+  String amount;
+  String duration;
   String addedDtime;
   String status;
 
@@ -42,6 +44,8 @@ class RespData {
       this.description,
       this.summary,
       this.returnRate,
+      this.amount,
+      this.duration,
       this.addedDtime,
       this.status});
 
@@ -51,6 +55,8 @@ class RespData {
     description = json['description'];
     summary = json['summary'];
     returnRate = json['return_rate'];
+    amount = json['amount'];
+    duration = json['duration'];
     addedDtime = json['added_dtime'];
     status = json['status'];
   }
@@ -61,6 +67,8 @@ class RespData {
     data['title'] = this.title;
     data['description'] = this.description;
     data['summary'] = this.summary;
+    data['return_rate'] = this.returnRate;
+    data['amount'] = this.amount;
     data['return_rate'] = this.returnRate;
     data['added_dtime'] = this.addedDtime;
     data['status'] = this.status;

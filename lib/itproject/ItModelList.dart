@@ -88,7 +88,9 @@ class _ItModelListState extends State<ItModelList> {
                       : widget.itModelList.description,
                   style: {
                     "body": Style(
-                        margin: EdgeInsets.all(0), padding: EdgeInsets.all(0))
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(0),
+                        textAlign: TextAlign.justify)
                   },
                 ),
               ),

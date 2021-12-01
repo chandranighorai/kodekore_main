@@ -37,6 +37,8 @@ class _InvestmentPlanListState extends State<InvestmentPlanList> {
                     invPlanTitle: widget.invesmentList.title,
                     invPlanDesc: widget.invesmentList.description,
                     invPlanAmount: widget.invesmentList.returnRate,
+                    invDuration: widget.invesmentList.duration,
+                    invAmount: widget.invesmentList.amount,
                     userId: widget.userId,
                     gst: widget.gst,
                     tds: widget.tds,
@@ -77,7 +79,9 @@ class _InvestmentPlanListState extends State<InvestmentPlanList> {
                     : widget.invesmentList.description,
                 style: {
                   "body": Style(
-                      margin: EdgeInsets.all(0), padding: EdgeInsets.all(0))
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      textAlign: TextAlign.justify)
                 },
               ),
               SizedBox(

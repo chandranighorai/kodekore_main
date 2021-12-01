@@ -178,7 +178,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                         style: {
                                           "body": Style(
                                               margin: EdgeInsets.all(0),
-                                              padding: EdgeInsets.all(0))
+                                              padding: EdgeInsets.all(0),
+                                              textAlign: TextAlign.justify)
                                         },
                                       )
                                     ],
@@ -191,7 +192,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                   style: {
                                     "body": Style(
                                         margin: EdgeInsets.all(0),
-                                        padding: EdgeInsets.all(0))
+                                        padding: EdgeInsets.all(0),
+                                        textAlign: TextAlign.justify)
                                   },
                                 ),
                           SizedBox(
