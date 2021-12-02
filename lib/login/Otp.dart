@@ -182,6 +182,7 @@ class _OtpState extends State<Otp> {
         var response = await dio.post(Consts.REGISTRATION_OTP_VERIFICATION,
             data: formData);
         showCustomToast(response.data["message"].toString());
+        print("response...000..." + response.data.toString());
         setState(() {
           _btnClick = true;
         });

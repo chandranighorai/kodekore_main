@@ -424,6 +424,7 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     // print("It Price..." +
     //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
+    print("grandtotal..." + grandTotal.toString());
     var options = {
       'key': keyString,
       //'amount': (double.parse(amount.text.toString()) * 100).toString(),

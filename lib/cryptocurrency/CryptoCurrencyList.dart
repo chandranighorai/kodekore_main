@@ -434,15 +434,19 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     // print("crpytoName..." +
     //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString());
 
-    newGst = double.parse(amountText.toString()) * (widget.gst / 100);
-    newTds = double.parse(amountText.toString()) * (widget.tds / 100);
-    newTotal = newGst + newTds + double.parse(amountText.toString());
+    // newGst = double.parse(amountText.toString()) * (widget.gst / 100);
+    // newTds = double.parse(amountText.toString()) * (widget.tds / 100);
+    // newTotal = newGst + newTds + double.parse(amountText.toString());
 
-    print("newGst..." + newGst.toString());
-    print("newTds..." + newTds.toString());
-    print("newTotal..." + newTotal.toString());
+    // print("newGst..." + newGst.toString());
+    // print("newTds..." + newTds.toString());
+    // print("newTotal..." + newTotal.toString());
 
-    var price = newTotal.toStringAsFixed(2).split(".");
+    //var price = newTotal.toStringAsFixed(2).split(".");
+    var price =
+        double.parse(amountText.toString()).toStringAsFixed(2).split(".");
+    print("newTotal..." + price.toString());
+
     grandTotal = ((int.parse(price[0]) * 100) + (int.parse(price[1])));
     print("newTotal..." + grandTotal.toString());
     var options = {
