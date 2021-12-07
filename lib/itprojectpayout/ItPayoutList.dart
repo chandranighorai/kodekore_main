@@ -6,6 +6,7 @@ import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ItPayoutList extends StatefulWidget {
   var contextData, payoutList, currentSortColumn, isAscending;
@@ -36,7 +37,7 @@ class _ItPayoutListState extends State<ItPayoutList> {
     super.initState();
     dataLoad = false;
     _getAllPayoutList(widget.payoutList);
-    _downloadFile();
+    //_downloadFile();
   }
 
   @override
@@ -142,7 +143,7 @@ class _ItPayoutListState extends State<ItPayoutList> {
                                             color: Colors.white,
                                           ), onTap: () {
                                         pdfUrl = item["path"];
-                                        _pdfDownload();
+                                        _pdfDownload(pdfUrl.toString());
                                         print("Pdf..." + pdfUrl.toString());
                                       })
                                     ]);
@@ -197,25 +198,29 @@ class _ItPayoutListState extends State<ItPayoutList> {
     }
   }
 
-  _pdfDownload() async {
-    var dio = Dio();
-    var dd = pdfUrl.split("/");
-    print("DD..." + dd[dd.length - 1]);
-    dio.download(pdfUrl, dirLoc + dd[dd.length - 1],
-        onReceiveProgress: (receivedBytes, totalBytes) {
-      print("here1...");
-      setState(() {
-        downloading = true;
-        progress =
-            ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
-        print("olololo...." + progress);
-        print("olololo...." + dirLoc + dd[dd.length - 1].toString());
-      });
-      if (progress.toString() == "100%") {
-        print("progress..." + progress.toString());
-        showCustomToast(
-            "File Saved in " + dirLoc + dd[dd.length - 1].toString());
-      }
-    });
+  _pdfDownload(String url) async {
+    if (!await launch(url)) throw "Could not launch url";
   }
+
+  // _pdfDownload() async {
+  //   var dio = Dio();
+  //   var dd = pdfUrl.split("/");
+  //   print("DD..." + dd[dd.length - 1]);
+  //   dio.download(pdfUrl, dirLoc + dd[dd.length - 1],
+  //       onReceiveProgress: (receivedBytes, totalBytes) {
+  //     print("here1...");
+  //     setState(() {
+  //       downloading = true;
+  //       progress =
+  //           ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+  //       print("olololo...." + progress);
+  //       print("olololo...." + dirLoc + dd[dd.length - 1].toString());
+  //     });
+  //     if (progress.toString() == "100%") {
+  //       print("progress..." + progress.toString());
+  //       showCustomToast(
+  //           "File Saved in " + dirLoc + dd[dd.length - 1].toString());
+  //     }
+  //   });
+  // }
 }
