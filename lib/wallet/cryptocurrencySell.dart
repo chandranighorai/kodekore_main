@@ -384,6 +384,9 @@ class _CryptoCurrencySellState extends State<CryptoCurrencySell> {
       print("total qty..." + widget.coinList1["totalQty"].toString());
       if (widget.coinList1["totalQty"].toString() == "0") {
         showCustomToast("There is no Coin to Sell");
+      } else if (double.parse(_bitCoinText.text.toString()) >
+          double.parse(widget.coinList1["totalQty"].toString())) {
+        showCustomToast("Total Quantity is less than The Selling amount");
       } else {
         var formData = FormData.fromMap({
           "oAuth_json": json.encode({
