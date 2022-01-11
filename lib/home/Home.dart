@@ -263,7 +263,7 @@ class _HomeState extends State<Home> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            CryptoCurrency("Crypto Currency")));
+                                            CryptoCurrency("Cryptocurrency")));
                               },
                               child: Container(
                                 margin: EdgeInsets.only(
@@ -315,7 +315,7 @@ class _HomeState extends State<Home> {
                                     Container(
                                         //alignment: Alignment.center,
                                         child: Text(
-                                      "Crypto Currency",
+                                      "Crypto currency",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: MediaQuery.of(context)

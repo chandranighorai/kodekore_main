@@ -188,10 +188,10 @@ class _EditProfileState extends State<EditProfile> {
 
   _update() async {
     try {
-      //print("data..." + kycData.bankName.toString());
+      print("data..." + widget.userId.toString());
       if ((firstNameEditText.text.trim().length == 0) ||
           (lastNameEditText.text.trim().length == 0)) {
-        showCustomToast("Field should not blank");
+        showCustomToast("Field should not be blank");
       } else {
         var formData = FormData.fromMap({
           "oAuth_json": json.encode({

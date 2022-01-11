@@ -216,7 +216,7 @@ class _NavigationState extends State<Navigation> {
                   ListTile(
                     visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                     title: Text(
-                      "Crypto Currency",
+                      "Cryptocurrency",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width * 0.04),
@@ -226,7 +226,7 @@ class _NavigationState extends State<Navigation> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                CryptoCurrency("Crypto Currency"))),
+                                CryptoCurrency("Cryptocurrency"))),
                   ),
                   Divider(
                     color: Colors.grey,
@@ -234,7 +234,7 @@ class _NavigationState extends State<Navigation> {
                   ListTile(
                     visualDensity: VisualDensity(horizontal: 0, vertical: -4),
                     title: Text(
-                      "Transections",
+                      "Transactions",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width * 0.04),
@@ -243,7 +243,7 @@ class _NavigationState extends State<Navigation> {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Transaction("Transections"))),
+                            builder: (context) => Transaction("Transactions"))),
                   ),
                   Divider(
                     color: Colors.grey,

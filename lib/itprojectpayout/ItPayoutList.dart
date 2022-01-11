@@ -98,7 +98,7 @@ class _ItPayoutListState extends State<ItPayoutList> {
                                 )),
                                 DataColumn(
                                     label: Text(
-                                  "Action",
+                                  "Invoice",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize:
@@ -138,9 +138,12 @@ class _ItPayoutListState extends State<ItPayoutList> {
                                         ),
                                       )),
                                       DataCell(
-                                          Icon(
-                                            Icons.download_rounded,
-                                            color: Colors.white,
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.download_rounded,
+                                              color: Colors.white,
+                                            ),
                                           ), onTap: () {
                                         pdfUrl = item["path"];
                                         _pdfDownload(pdfUrl.toString());
@@ -156,8 +159,10 @@ class _ItPayoutListState extends State<ItPayoutList> {
 
   _getAllPayoutList(var payoutList) {
     for (int i = 0; i < payoutList.length; i++) {
-      var date = payoutList[i]["dtime"].toString().split("");
+      //print("date..." + payoutList[i]["dtime"].toString());
+      var date = payoutList[i]["dtime"].toString().split(" ");
       var dateShow = date[0];
+      print("date..." + dateShow.toString());
       var pp = {
         "date": dateShow,
         "description": payoutList[i]["proj_title"] == null

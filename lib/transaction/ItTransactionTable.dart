@@ -122,7 +122,7 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                             )),
                             DataColumn(
                                 label: Text(
-                              "Action",
+                              "Invoice",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize:
@@ -186,9 +186,12 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                                 0.05),
                                   )),
                                   DataCell(
-                                      Icon(
-                                        Icons.download_sharp,
-                                        color: Colors.white,
+                                      Container(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.download_sharp,
+                                          color: Colors.white,
+                                        ),
                                       ), onTap: () {
                                     print("File path...." +
                                         items["path"].toString());

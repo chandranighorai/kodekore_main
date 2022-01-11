@@ -145,7 +145,7 @@ class _CryptoTableState extends State<CryptoTable> {
                                 )),
                                 DataColumn(
                                     label: Text(
-                                  "Action",
+                                  "Invoice",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize:
@@ -207,9 +207,12 @@ class _CryptoTableState extends State<CryptoTable> {
                                         style: TextStyle(color: Colors.white),
                                       )),
                                       DataCell(
-                                          Icon(
-                                            Icons.download_sharp,
-                                            color: Colors.white,
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.download_sharp,
+                                              color: Colors.white,
+                                            ),
                                           ), onTap: () {
                                         print("plan Name...." +
                                             items["plan"].toString());
