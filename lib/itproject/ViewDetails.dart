@@ -163,7 +163,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                           // Text(
                           //     //"4.2.1. Users can choose a suitable investment plan from the multiple plans given by the admin while creating a plan from admin."),
                           //     "${responseData["description"]}"),
-                          widget.itModelDescription.length > 700
+                          widget.itModelDescription.length > 500
                               ? Container(
                                   height:
                                       MediaQuery.of(context).size.width * 0.6,

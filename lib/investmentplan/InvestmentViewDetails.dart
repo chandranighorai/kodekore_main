@@ -70,6 +70,7 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
 
   @override
   Widget build(BuildContext context) {
+    print("investment duration:.." + widget.invDuration.toString());
     return Scaffold(
       // appBar: AppBar(
       //   elevation: 0,
