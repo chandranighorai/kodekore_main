@@ -33,6 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController firstNameEditText, lastNameEditText;
   var dio = Dio();
   KycData kycData;
+  bool firstnameLoad, lastnameLoad;
   @override
   void initState() {
     firstNameEditText = new TextEditingController();
@@ -40,6 +41,8 @@ class _EditProfileState extends State<EditProfile> {
     //numberEditText = new TextEditingController();
     firstNameEditText.text = widget.firstName;
     lastNameEditText.text = widget.lastName;
+    firstnameLoad = false;
+    lastnameLoad = false;
     _kycUpdate();
     super.initState();
   }
@@ -95,6 +98,11 @@ class _EditProfileState extends State<EditProfile> {
                         controller: firstNameEditText,
                         decoration:
                             InputDecoration(hintText: "Enter First name"),
+                        onChanged: (value) {
+                          setState(() {
+                            firstnameLoad = true;
+                          });
+                        },
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.width * 0.03,
@@ -104,6 +112,11 @@ class _EditProfileState extends State<EditProfile> {
                         controller: lastNameEditText,
                         decoration:
                             InputDecoration(hintText: "Enter Last name"),
+                        onChanged: (value) {
+                          setState(() {
+                            lastnameLoad = true;
+                          });
+                        },
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.width * 0.03,
@@ -192,6 +205,8 @@ class _EditProfileState extends State<EditProfile> {
       if ((firstNameEditText.text.trim().length == 0) ||
           (lastNameEditText.text.trim().length == 0)) {
         showCustomToast("Field should not be blank");
+      } else if (firstnameLoad == false && lastnameLoad == false) {
+        showCustomToast("You havn't changed anyting");
       } else {
         var formData = FormData.fromMap({
           "oAuth_json": json.encode({

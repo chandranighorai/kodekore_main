@@ -165,10 +165,9 @@ class _WalletState extends State<Wallet> {
                                         // _bitCoinText
                                         //     .add(new TextEditingController());
                                         return CryptoCurrencySell(
-                                          coinList1: coinList[index],
-                                          userId:userId,
-                                          cryptoData:cryptoData
-                                        );
+                                            coinList1: coinList[index],
+                                            userId: userId,
+                                            cryptoData: cryptoData);
                                       }))
                             ]),
 
@@ -578,11 +577,14 @@ class _WalletState extends State<Wallet> {
     }
   }
 
-  
-
   _fieldCheck() {
+    var validCharacter = RegExp(r'^[0-9\.]');
+    var char = RegExp(r'^[1-9]');
     if (_amountText.text.trim().length == 0) {
       showCustomToast("Field should not empty");
+      return false;
+    } else if (!validCharacter.hasMatch(_amountText.text)) {
+      showCustomToast("Please enter proper amount");
       return false;
     } else {
       return true;
@@ -683,6 +685,4 @@ class _WalletState extends State<Wallet> {
     // totalAmount.add(totalValue);
     // print("TotalValue..." + totalAmount.toString());
   }
-
-  
 }

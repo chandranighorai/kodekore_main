@@ -12,9 +12,10 @@ import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter/services.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:flutter/services.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'NewModel.dart';
+import 'package:payumoney_pro_unofficial/payumoney_pro_unofficial.dart';
 
 class ViewDetails extends StatefulWidget {
   var itModelList,
@@ -67,22 +68,22 @@ class _ViewDetailsState extends State<ViewDetails> {
   String paymentStatus = "null";
   String paymentId = "null";
   String installmentSerial;
-  static const platform = const MethodChannel("razorpay_flutter");
-  Razorpay _razorpay;
+  // static const platform = const MethodChannel("razorpay_flutter");
+  // Razorpay _razorpay;
   @override
   void initState() {
     // TODO: implement initState
     _projectBrought();
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternelWallet);
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternelWallet);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear();
+    //_razorpay.clear();
   }
 
   @override
@@ -558,51 +559,84 @@ class _ViewDetailsState extends State<ViewDetails> {
         ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
     print("It Price...grandTotal..." + grandTotal.toString());
-    var options = {
-      'key': key.toString(),
-      'amount': grandTotal.toString(),
-      //(double.parse(widget.itModelAmount.toString()) * 100).toString(),
-      'name': widget.itModelTitle.toString(),
-      //'description': widget.itModelDescription.toString(),
-      'prefill': {
-        'contact': userphone.toString(),
-        'email': userEmail.toString()
-      },
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-    try {
-      print("options..." + options.toString());
-      _razorpay.open(options);
-    } catch (e) {
-      print(e.toString());
-    }
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+    print("OrderId..." + orderId.toString());
+    print("OrderId..." + key.toString());
+    final String amount = grandTotal.toString();
+    var response = await PayumoneyProUnofficial.payUParams(
+        amount: amount,
+        isProduction: false,
+        productInfo: widget.itModelTitle.toString(),
+        merchantKey: 'oZ7oo9',
+        userPhoneNumber: userphone.toString(),
+        transactionId: orderId,
+        firstName: widget.itModelTitle.toString(),
+        merchantName: 'Kode Core',
+        merchantSalt: 'UkojH5TS',
+        email: userEmail.toString(),
+        hashUrl: '',
+        showLogs: true,
+        showExitConfirmation: true,
+        userCredentials: 'merchantKey:kodecore.payment@gmail.com');
+    print("response..." + response.toString());
+    print("response..." + response['status'].toString());
+    var keyId = json.decode(response['payuResponse']);
+    if (response['status'] == PayUParams.success)
+      handlepaymentSuccess(keyId['id'].toString(), amount);
+    if (response['status'] == PayUParams.failed)
+      handlePaymentFailure(amount, response['message']);
+    // var options = {
+    //   'key': key.toString(),
+    //   'amount': grandTotal.toString(),
+    //   //(double.parse(widget.itModelAmount.toString()) * 100).toString(),
+    //   'name': widget.itModelTitle.toString(),
+    //   //'description': widget.itModelDescription.toString(),
+    //   'prefill': {
+    //     'contact': userphone.toString(),
+    //     'email': userEmail.toString()
+    //   },
+    //   'external': {
+    //     'wallets': ['paytm']
+    //   }
+    // };
+    // try {
+    //   print("options..." + options.toString());
+    //   _razorpay.open(options);
+    // } catch (e) {
+    //   print(e.toString());
+    // }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success payment id..." + response.paymentId.toString());
+  void handlepaymentSuccess(String paymentId, String amount) {
+    print("Success payment id..." + paymentId.toString());
     setState(() {
       pageLoad = false;
       paymentStatus = "1";
-      paymentId = response.paymentId.toString();
+      paymentId = paymentId.toString();
       _confirmBuy();
       //_projectBrought();
     });
-    showCustomToast("Success..." + response.paymentId.toString());
+    showCustomToast("Success..." + paymentId.toString());
   }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    print("Failure payment id..." + response.code.toString());
-    var message = json.decode(response.message);
-    print("Failure payment id..." + message["error"]["reason"].toString());
-    showCustomToast("Failure..." + message["error"]["reason"].toString());
+  handlePaymentFailure(String amount, String error) {
+    print("Amount..." + amount.toString());
+    print("Failed");
+    print(error);
+    showCustomToast(error);
   }
 
-  _handleExternelWallet(ExternalWalletResponse response) {
-    print("Externel payment id..." + response.walletName.toString());
-    showCustomToast("Externel wallet..." + response.walletName.toString());
-  }
+  // void _handlePaymentError(PaymentFailureResponse response) {
+  //   print("Failure payment id..." + response.code.toString());
+  //   var message = json.decode(response.message);
+  //   print("Failure payment id..." + message["error"]["reason"].toString());
+  //   showCustomToast("Failure..." + message["error"]["reason"].toString());
+  // }
+
+  // _handleExternelWallet(ExternalWalletResponse response) {
+  //   print("Externel payment id..." + response.walletName.toString());
+  //   showCustomToast("Externel wallet..." + response.walletName.toString());
+  // }
 
   _confirmBuy() async {
     // print("It Price...0.." + userId.toString());

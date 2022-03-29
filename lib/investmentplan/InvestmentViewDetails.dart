@@ -7,9 +7,10 @@ import 'package:kode_core/home/Navigation.dart';
 import 'package:kode_core/shapes/ShapeComponent.dart';
 import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
-import 'package:flutter/services.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:flutter/services.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:payumoney_pro_unofficial/payumoney_pro_unofficial.dart';
 
 class InvestmentViewDetails extends StatefulWidget {
   String invPlanId,
@@ -45,8 +46,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   var responseData;
   var userPhone;
   var userEmail;
-  static const platform = const MethodChannel("razorpay_flutter");
-  Razorpay _razorpay;
+  // static const platform = const MethodChannel("razorpay_flutter");
+  // Razorpay _razorpay;
   String paymentStatus = "null";
   String paymentId = "null";
   double newGst, newTds, newTotal;
@@ -56,16 +57,16 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     // TODO: implement initState
     amount = new TextEditingController();
     super.initState();
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear();
+    //_razorpay.clear();
   }
 
   @override
@@ -360,56 +361,63 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     }
   }
 
-  _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success..." + response.paymentId.toString());
+  handlepaymentSuccess(String paymentId, String amount) {
+    print("Success..." + paymentId.toString());
     setState(() {
-      paymentId = response.paymentId;
+      paymentId = paymentId;
       paymentStatus = "1";
       _investNow();
     });
-    showCustomToast("Success: " + response.paymentId.toString());
+    showCustomToast("Success: " + paymentId.toString());
   }
 
-  _handlePaymentError(PaymentFailureResponse response) {
-    print("Failure..." + response.code.toString());
-    print("Failure..." + response.message.toString());
-    var message = json.decode(response.message);
-    showCustomToast("Failure: " + message["error"]["reason"].toString());
+  handlePaymentFailure(String amount, String error) {
+    print("Amount..." + amount.toString());
+    print("Failed");
+    print(error);
+    showCustomToast(error);
   }
 
-  _handleExternalWallet(ExternalWalletResponse response) {
-    print("Wallet..." + response.walletName.toString());
-    showCustomToast("Wallet: " + response.walletName.toString());
-  }
+  // _handlePaymentError(PaymentFailureResponse response) {
+  //   print("Failure..." + response.code.toString());
+  //   print("Failure..." + response.message.toString());
+  //   var message = json.decode(response.message);
+  //   showCustomToast("Failure: " + message["error"]["reason"].toString());
+  // }
+
+  // _handleExternalWallet(ExternalWalletResponse response) {
+  //   print("Wallet..." + response.walletName.toString());
+  //   showCustomToast("Wallet: " + response.walletName.toString());
+  // }
 
   _keyGenerate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userPhone = prefs.getString("phone");
     userEmail = prefs.getString("email");
-
-    try {
-      // if (amount.text.length == 0) {
-      //   showCustomToast("Enter amount");
-      // } else {
-      var keydata = FormData.fromMap({
-        "oAuth_json": json.encode({
-          "sKey": "dfdbayYfd4566541cvxcT34#gt55",
-          "aKey": "3EC5C12E6G34L34ED2E36A9"
-        }),
-        "jsonParam": json.encode({})
-      });
-      var keyResponse = await dio.post(Consts.PAYMENT_KEYS, data: keydata);
-      print("Keydata..." + keyResponse.data.toString());
-      if (keyResponse.data["success"] == 1) {
-        openCheckOut(keyResponse.data["respData"]["Key_Id"].toString());
-      }
-      // }
-    } on DioError catch (e) {
-      print(e.toString());
-    }
+    openCheckOut();
+    // try {
+    //   // if (amount.text.length == 0) {
+    //   //   showCustomToast("Enter amount");
+    //   // } else {
+    //   var keydata = FormData.fromMap({
+    //     "oAuth_json": json.encode({
+    //       "sKey": "dfdbayYfd4566541cvxcT34#gt55",
+    //       "aKey": "3EC5C12E6G34L34ED2E36A9"
+    //     }),
+    //     "jsonParam": json.encode({})
+    //   });
+    //   var keyResponse = await dio.post(Consts.PAYMENT_KEYS, data: keydata);
+    //   print("Keydata..." + keyResponse.data.toString());
+    //   if (keyResponse.data["success"] == 1) {
+    //     openCheckOut(keyResponse.data["respData"]["Key_Id"].toString());
+    //   }
+    //   // }
+    // } on DioError catch (e) {
+    //   print(e.toString());
+    // }
   }
 
-  openCheckOut(String keyString) async {
+  openCheckOut() async {
     // print("KeyString..." + keyString.toString());
     // print("KeyString..." + widget.tds.toString());
     //newGst = double.parse(widget.invAmount.toString()) * (widget.gst / 100);
@@ -417,6 +425,7 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     //newTotal = newGst + newTds + double.parse(widget.invAmount.toString());
     newTotal = double.parse(widget.invAmount.toString());
     var price = newTotal.toStringAsFixed(2).split(".");
+    print("Price..." + price.toString());
     // print("It Price..." + widget.gst.toString());
     // print("It Price..." + widget.tds.toString());
     // print("It Price..." + newGst.toString());
@@ -426,23 +435,49 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
     grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
     print("grandtotal..." + grandTotal.toString());
-    var options = {
-      'key': keyString,
-      //'amount': (double.parse(amount.text.toString()) * 100).toString(),
-      'amount': grandTotal.toString(),
-      'name': widget.invPlanTitle.toString(),
-      'prefill': {
-        'contact': userPhone.toString(),
-        'email': userEmail.toString()
-      },
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      print(e.toString());
-    }
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+    print("OrderId..." + orderId.toString());
+    //print("OrderId..." + key.toString());
+    final String amount = grandTotal.toString();
+    var response = await PayumoneyProUnofficial.payUParams(
+        amount: amount,
+        isProduction: false,
+        productInfo: widget.invPlanTitle.toString(),
+        merchantKey: 'oZ7oo9',
+        userPhoneNumber: userPhone.toString(),
+        transactionId: orderId,
+        firstName: widget.invPlanTitle.toString(),
+        merchantName: 'Kode Core',
+        merchantSalt: 'UkojH5TS',
+        email: userEmail.toString(),
+        hashUrl: '',
+        showLogs: true,
+        showExitConfirmation: true,
+        userCredentials: 'merchantKey:kodecore.payment@gmail.com');
+    print("response..." + response.toString());
+    print("response..." + response['status'].toString());
+    var keyId = json.decode(response['payuResponse']);
+    if (response['status'] == PayUParams.success)
+      handlepaymentSuccess(keyId['id'].toString(), amount);
+    if (response['status'] == PayUParams.failed)
+      handlePaymentFailure(amount, response['message']);
+    // var options = {
+    //   'key': keyString,
+    //   //'amount': (double.parse(amount.text.toString()) * 100).toString(),
+    //   'amount': grandTotal.toString(),
+    //   'name': widget.invPlanTitle.toString(),
+    //   'prefill': {
+    //     'contact': userPhone.toString(),
+    //     'email': userEmail.toString()
+    //   },
+    //   'external': {
+    //     'wallets': ['paytm']
+    //   }
+    // };
+    // try {
+    //   _razorpay.open(options);
+    // } catch (e) {
+    //   print(e.toString());
+    // }
   }
 }

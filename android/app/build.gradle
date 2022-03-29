@@ -81,4 +81,5 @@ dependencies {
      implementation platform('com.google.firebase:firebase-bom:28.4.2')
     // implementation 'com.google.firebase:firebase-messaging:20.1.0'
      implementation 'com.google.firebase:firebase-analytics'
+     implementation 'in.payu:payu-checkout-pro:1.8.2' 
 }

@@ -408,6 +408,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
+  payumoney_pro_unofficial:
+    dependency: "direct main"
+    description:
+      name: payumoney_pro_unofficial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.9"
   pedantic:
     dependency: transitive
     description:

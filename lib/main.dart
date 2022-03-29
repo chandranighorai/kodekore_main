@@ -30,7 +30,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp();
   FirebaseMessaging.instance.getToken().then((value) {
     var fcmToken = value.toString();
