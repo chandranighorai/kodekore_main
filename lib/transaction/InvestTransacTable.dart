@@ -110,6 +110,9 @@ class _InvestTransactionTableState extends State<InvestTransactionTable> {
                                   //alignment: Alignment.center,
                                   child: Text(
                                     "Plan Name",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: true,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:

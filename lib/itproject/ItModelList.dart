@@ -110,14 +110,14 @@ class _ItModelListState extends State<ItModelList> {
                   Container(
                       color: AppColors.buttonColor,
                       padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width * 0.03,
+                        MediaQuery.of(context).size.width * 0.02,
                       ),
                       child: Text(
-                        "View Details",
+                        "View \n Details",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.035),
+                            fontSize: MediaQuery.of(context).size.width * 0.03),
                       ))
                 ],
               )

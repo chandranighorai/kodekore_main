@@ -169,6 +169,9 @@ class _ItTransactionTableState extends State<ItTransactionTable> {
                                         MediaQuery.of(context).size.width * 0.7,
                                     child: Text(
                                       items["description"],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: MediaQuery.of(context)

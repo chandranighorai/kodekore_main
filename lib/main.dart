@@ -9,6 +9,7 @@ import 'package:kode_core/util/AppColors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Login/login.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 //import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -76,14 +77,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var otpStatus, kycStatus;
+  var otpStatus, kycStatus, fcm;
   bool pageLoad;
+  var expireDate, todaysDate;
+  DateTime dt;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     pageLoad = false;
+    todaysDate = DateTime.now();
     var initializationSettingsAndroid =
         AndroidInitializationSettings("@mipmap/ic_launcher");
     var initializationSettings =
@@ -128,11 +132,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   //valueColor: AppColors.buttonColor,
                   ),
             )
-          : otpStatus.toString() == "1" ||
+          : (otpStatus.toString() == "1" ||
                   otpStatus.toString() == "null" ||
-                  otpStatus.toString() == "0"
+                  otpStatus.toString() == "0")
               ? Login()
-              : Home(),
+              : (((expireDate == null) || (dt.isBefore(todaysDate))))
+                  ? Login()
+                  : Home(),
     );
   }
 
@@ -142,9 +148,24 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         otpStatus = pref.getString("otpStatus");
         kycStatus = pref.getString("KycStatus");
+        fcm = pref.getString("FCM");
+
         print("otpStatus...." + otpStatus.toString());
         print("kycStatus...." + kycStatus.toString());
-
+        print("FCM...." + fcm.toString());
+        expireDate = pref.getString("ExpireDate");
+        print("expire date..." + expireDate.toString());
+        if (expireDate != null) {
+          dt = DateTime.parse(expireDate.toString());
+          print("todays date..." + todaysDate.runtimeType.toString());
+          print("todays date..." + dt.runtimeType.toString());
+        }
+        // if (dt.isBefore(todaysDate)) {
+        //   print("yes");
+        // } else {
+        //   print("no");
+        // }
+        // print("expireDate..." + expireDate.toString());
         pageLoad = true;
       });
     } on DioError catch (e) {

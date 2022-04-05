@@ -14,6 +14,7 @@ import 'package:kode_core/util/Util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Navigation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 
 //import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
@@ -34,6 +35,19 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // var nxtTwoDays = DateTime.now().add(new Duration(days: 2));
+    // print("nxtDays..." + nxtTwoDays.toString());
+    //print("nxtDays..." + nxtTwoDays.toString());
+    // var myDate = DateFormat('d-MM-yyyy').format(nxtTwoDays);
+    // var todayDate = DateFormat('d-MM-yyyy').format(DateTime.now());
+    // print("nxtDays..." + todayDate.toString());
+    // print("nxtDays..." + myDate.toString());
+    // if (todayDate == myDate) {
+    //   print("dates are same");
+    // } else {
+    //   print("dates are not same");
+    // }
+
     // _notification();
     // FirebaseMessaging.instance
     //     .getInitialMessage()

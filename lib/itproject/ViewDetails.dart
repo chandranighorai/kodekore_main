@@ -353,7 +353,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                     .width *
                                                 0.05),
                                       ),
-                                      onPressed: () => _buyItProject(),
+                                      onPressed: () => openCheckout(),
+                                      //onPressed: () => _buyItProject(),
                                       //"Buy Now",
                                       //textAlign: TextAlign.center,
                                     ),
@@ -487,7 +488,7 @@ class _ViewDetailsState extends State<ViewDetails> {
         dio.post(Consts.PAYMENT_KEYS, data: generateKey)
       ]);
       if (buyResponse[0].data["success"] == 1) {
-        openCheckout(buyResponse[0].data["respData"]["Key_Id"].toString());
+        //openCheckout(buyResponse[0].data["respData"]["Key_Id"].toString());
       }
       print("keyDetails..." + buyResponse.toString());
       // if (buyResponse[0].data["success"] == 1) {
@@ -514,25 +515,40 @@ class _ViewDetailsState extends State<ViewDetails> {
     }
   }
 
-  void openCheckout(String key) async {
+  void openCheckout() async {
+    print("modelPaymentBreakUp..." + widget.itModelPaymentBreakup.toString());
+    print("modelPaymentBreakUp..." + widget.itModelAmount.toString());
+    print("modelPaymentBreakUp..." + installmentSerial.toString());
+    // print("modelPaymentBreakUp..." +
+    //     widget.itModelFirstInstallmentAmount.toString());
+    print("modelPaymentBreakUp..." +
+        widget.itModelSecondInstallmentAmount.toString());
+    //print("modelPaymentBreakUp..." + (widget.gst / 100).toString());
+    print("modelPaymentBreakUp...gst..." + (widget.gst / 100).toString());
+
     newGst = double.parse(widget.itModelPaymentBreakup != "2"
             ? widget.itModelAmount.toString()
             : installmentSerial == "1"
                 ? widget.itModelSecondInstallmentAmount.toString()
                 : widget.itModelFirstInstallmentAmount.toString()) *
         (widget.gst / 100);
-    // newTds = double.parse(widget.itModelPaymentBreakup != "2"
-    //         ? widget.itModelAmount.toString()
-    //         : installmentSerial == "1"
-    //             ? widget.itModelSecondInstallmentAmount.toString()
-    //             : widget.itModelFirstInstallmentAmount.toString()) *
-    //     (widget.tds / 100);
-    // newRoyalty = double.parse(widget.itModelPaymentBreakup != "2"
-    //         ? widget.itModelAmount.toString()
-    //         : installmentSerial == "1"
-    //             ? widget.itModelSecondInstallmentAmount.toString()
-    //             : widget.itModelFirstInstallmentAmount.toString()) *
-    //     (widget.royalty / 100);
+    print("modelPaymentBreakUp...newgst..." + newGst.toString());
+    print("modelPaymentBreakUp...tds..." + (widget.tds / 100).toString());
+    newTds = double.parse(widget.itModelPaymentBreakup != "2"
+            ? widget.itModelAmount.toString()
+            : installmentSerial == "1"
+                ? widget.itModelSecondInstallmentAmount.toString()
+                : widget.itModelFirstInstallmentAmount.toString()) *
+        (widget.tds / 100);
+    print("modelPaymentBreakUp...newTds..." + newTds.toString());
+    print("modelPaymentBreakUp...royalty.." + widget.royalty.toString());
+    newRoyalty = double.parse(widget.itModelPaymentBreakup != "2"
+            ? widget.itModelAmount.toString()
+            : installmentSerial == "1"
+                ? widget.itModelSecondInstallmentAmount.toString()
+                : widget.itModelFirstInstallmentAmount.toString()) *
+        (widget.royalty / 100);
+    print("modelPaymentBreakUp...new royalty..." + newRoyalty.toString());
     // newTotal = (newGst +
     //         newTds +
     //         double.parse(widget.itModelPaymentBreakup != "2"
@@ -547,22 +563,23 @@ class _ViewDetailsState extends State<ViewDetails> {
             : installmentSerial == "1"
                 ? widget.itModelSecondInstallmentAmount.toString()
                 : widget.itModelFirstInstallmentAmount.toString()));
-    var price = newTotal.toStringAsFixed(2).split(".");
-    print("It Price...gst..." + widget.gst.toString());
-    // print("It Price...tds..." + widget.tds.toString());
-    print("It Price...gst..." + newGst.toString());
-    // print("It Price...newTds..." + newTds.toString());
-    // print("It Price...newRoyalty..." + newRoyalty.toString());
-    print("It Price...newTotal..." + newTotal.toString());
-    print("It Price...price..." + price.toString());
-    print("It Price..." +
-        ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
-    grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
-    print("It Price...grandTotal..." + grandTotal.toString());
+    // var price = newTotal.toStringAsFixed(2).split(".");
+    // print("It Price...gst..." + widget.gst.toString());
+    // // print("It Price...tds..." + widget.tds.toString());
+    // print("It Price...gst..." + newGst.toString());
+    // // print("It Price...newTds..." + newTds.toString());
+    // // print("It Price...newRoyalty..." + newRoyalty.toString());
+    // print("It Price...newTotal..." + newTotal.toString());
+    // print("It Price...price..." + price.toString());
+    // print("It Price..." +
+    //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
+    // grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
+    // print("It Price...grandTotal..." + grandTotal.toString());
     String orderId = DateTime.now().millisecondsSinceEpoch.toString();
     print("OrderId..." + orderId.toString());
-    print("OrderId..." + key.toString());
-    final String amount = grandTotal.toString();
+    //print("OrderId..." + key.toString());
+    //final String amount = grandTotal.toString();
+    final String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
         isProduction: false,
@@ -607,12 +624,12 @@ class _ViewDetailsState extends State<ViewDetails> {
     // }
   }
 
-  void handlepaymentSuccess(String paymentId, String amount) {
+  void handlepaymentSuccess(String paymentIdResponse, String amount) {
     print("Success payment id..." + paymentId.toString());
     setState(() {
       pageLoad = false;
       paymentStatus = "1";
-      paymentId = paymentId.toString();
+      paymentId = paymentIdResponse.toString();
       _confirmBuy();
       //_projectBrought();
     });
@@ -648,13 +665,17 @@ class _ViewDetailsState extends State<ViewDetails> {
                     ? widget.itModelSecondInstallmentAmount.toString()
                     : widget.itModelFirstInstallmentAmount.toString())
             .toString());
-    // print("It Price...0.." + paymentStatus.toString());
-    // print("It Price...0.." + paymentId.toString());
-    // print("It Price...0.." + widget.gst.toString());
-    // print("It Price...0.." + newGst.toString());
-    // print("It Price...0.." + widget.tds.toString());
-    // print("It Price...0.." + newTds.toString());
-    // print("It Price...0.." + (grandTotal / 100).toString());
+    print("It Price...0.." + paymentStatus.toString());
+    print("It Price...0.." + paymentId.toString());
+    print("It Price...0.." + widget.gst.toString());
+    print("It Price...0.." + newGst.toString());
+    print("It Price...0.." + widget.tds.toString());
+    print("It Price...0.." + newTds.toString());
+    print("It Price...0.." + widget.royalty.toString());
+    print("It Price...0.." + newRoyalty.toString());
+    print("It Price...0.." + newTotal.toString());
+
+    //print("It Price...0.." + (grandTotal / 100).toString());
     try {
       var boughtProject = FormData.fromMap({
         "oAuth_json": json.encode({
@@ -678,7 +699,8 @@ class _ViewDetailsState extends State<ViewDetails> {
           "tds_rate": newTds.toString(),
           "royalty_per": widget.royalty,
           "royalty_rate": newRoyalty.toString(),
-          "grand_total": (grandTotal / 100).toString(),
+          //"grand_total": (grandTotal / 100).toString(),
+          "grand_total": newTotal.toString(),
           "installment_serial": buyBtnShowSuccess == 0
               ? "1"
               : installmentSerial == "1"

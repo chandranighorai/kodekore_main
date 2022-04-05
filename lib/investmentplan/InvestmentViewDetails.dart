@@ -316,16 +316,16 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
   // }
 
   _investNow() async {
-    // print("It Price...0.." + widget.userId.toString());
-    // print("It Price...0.." + widget.invPlanId.toString());
-    // print("It Price...0.." + amount.text.toString());
-    // print("It Price...0.." + paymentStatus.toString());
-    // print("It Price...0.." + paymentId.toString());
-    // print("It Price...0.." + widget.gst.toString());
-    // print("It Price...0.." + newGst.toString());
-    // print("It Price...0.." + widget.tds.toString());
-    // print("It Price...0.." + newTds.toString());
-    // print("It Price...0.." + (grandTotal / 100).toString());
+    print("It Price...0.." + widget.userId.toString());
+    print("It Price...0.." + widget.invPlanId.toString());
+    print("It Price...0.." + amount.text.toString());
+    print("It Price...0.." + paymentStatus.toString());
+    print("It Price...0.." + paymentId.toString());
+    print("It Price...0.." + widget.gst.toString());
+    print("It Price...0.." + newGst.toString());
+    print("It Price...0.." + widget.tds.toString());
+    print("It Price...0.." + newTds.toString());
+    print("It Price...0.." + newTotal.toString());
     try {
       // if (amount.text.length == 0) {
       //   showCustomToast("Enter amount");
@@ -346,7 +346,8 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
           "gst_rate": newGst.toString(),
           "tds_per": widget.tds.toString(),
           "tds_rate": newTds.toString(),
-          "grand_total": (grandTotal / 100).toString()
+          "grand_total": newTotal.toString()
+          //"grand_total": (grandTotal / 100).toString()
         })
       });
       var invest = await dio.post(Consts.BUY_INVESTMENT_PLAN, data: amountData);
@@ -361,10 +362,10 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     }
   }
 
-  handlepaymentSuccess(String paymentId, String amount) {
+  handlepaymentSuccess(String paymentIdResponse, String amount) {
     print("Success..." + paymentId.toString());
     setState(() {
-      paymentId = paymentId;
+      paymentId = paymentIdResponse;
       paymentStatus = "1";
       _investNow();
     });
@@ -424,21 +425,23 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
     //newTds = double.parse(widget.invAmount.toString()) * (widget.tds / 100);
     //newTotal = newGst + newTds + double.parse(widget.invAmount.toString());
     newTotal = double.parse(widget.invAmount.toString());
-    var price = newTotal.toStringAsFixed(2).split(".");
-    print("Price..." + price.toString());
-    // print("It Price..." + widget.gst.toString());
-    // print("It Price..." + widget.tds.toString());
-    // print("It Price..." + newGst.toString());
-    // print("It Price..." + newTds.toString());
-    // print("It Price..." + newTotal.toString());
-    // print("It Price..." +
-    //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
-    grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
-    print("grandtotal..." + grandTotal.toString());
+    print("Price..." + newTotal.toString());
+    // var price = newTotal.toStringAsFixed(2).split(".");
+    // print("Price..." + price.toString());
+    // // print("It Price..." + widget.gst.toString());
+    // // print("It Price..." + widget.tds.toString());
+    // // print("It Price..." + newGst.toString());
+    // // print("It Price..." + newTds.toString());
+    // // print("It Price..." + newTotal.toString());
+    // // print("It Price..." +
+    // //     ((int.parse(price[0]) * 100) + int.parse(price[1])).toString());
+    // grandTotal = ((int.parse(price[0]) * 100) + int.parse(price[1]));
+    //print("grandtotal..." + grandTotal.toString());
     String orderId = DateTime.now().millisecondsSinceEpoch.toString();
     print("OrderId..." + orderId.toString());
     //print("OrderId..." + key.toString());
-    final String amount = grandTotal.toString();
+    //final String amount = grandTotal.toString();
+    final String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
         isProduction: false,

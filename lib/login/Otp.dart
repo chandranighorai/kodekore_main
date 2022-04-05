@@ -10,6 +10,7 @@ import 'package:kode_core/util/AppColors.dart';
 import 'package:kode_core/util/Const.dart';
 import 'package:kode_core/login/UserPreference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 class Otp extends StatefulWidget {
@@ -25,10 +26,13 @@ class _OtpState extends State<Otp> {
   TextEditingController otpText;
   bool _btnClick;
   var dio = Dio();
+  var nextToDays, newDate;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    nextToDays = DateTime.now().add(Duration(days: 2));
+    //newDate = DateFormat('d-MM-yyyy').format(nextToDays);
     otpText = new TextEditingController();
     _btnClick = true;
   }
@@ -161,6 +165,7 @@ class _OtpState extends State<Otp> {
 
   otpSubmit() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+
     try {
       if (otpText.text.length == 0) {
         showCustomToast("Enter valid OTP");
@@ -192,6 +197,7 @@ class _OtpState extends State<Otp> {
                 "otpStatus", response.data["respData"]["otp_status"]);
             pref.setString(
                 "KycStatus", response.data["respData"]["kyc_status"]);
+            pref.setString("ExpireDate", nextToDays.toString());
             otpText.text = "";
           });
           print("kyc...." + response.data["respData"]["kyc_status"].toString());
@@ -261,6 +267,7 @@ class _OtpState extends State<Otp> {
               logInResponse.data["respData"]["login_otp_status"];
           respData1.kycStatus = logInResponse.data["respData"]["kyc_status"];
           saveUserPref(respData1);
+          pref.setString("ExpireDate", nextToDays.toString());
           setState(() {
             otpText.text = "";
           });

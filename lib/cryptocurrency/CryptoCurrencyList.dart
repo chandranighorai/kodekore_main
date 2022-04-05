@@ -138,6 +138,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Consts/AppConsts.dart';
 import '../util/Const.dart';
+import 'package:payumoney_pro_unofficial/payumoney_pro_unofficial.dart';
 
 class CryptoCurrencyList extends StatefulWidget {
   RespData cryptoDataList;
@@ -164,8 +165,8 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
   var dio = Dio();
   String amountText;
   bool buyEnable;
-  static const platform = const MethodChannel("razorpay_flutter");
-  Razorpay _razorpay;
+  // static const platform = const MethodChannel("razorpay_flutter");
+  // Razorpay _razorpay;
   var userPhone, userEmail;
   String paymentId = "null";
   String paymentStatus = "null";
@@ -178,16 +179,16 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     quantitytext = new TextEditingController();
     amountText = "0";
     buyEnable = true;
-    _razorpay = new Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlepaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlepaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay = new Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlepaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlepaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear();
+    // _razorpay.clear();
   }
 
   @override
@@ -280,7 +281,8 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
                           // setState(() {
                           //   buyEnable = false;
                           // });
-                          _keyGenerate();
+                          //_keyGenerate();
+                          openCheckOut();
                           //_buyNow();
                         },
                         child: Container(
@@ -320,7 +322,8 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
   }
 
   _buyNow() async {
-    // print("USERId..." + widget.userId);
+    print("USERId..." + widget.userId.toString());
+    print("newTotal..." + newTotal.toString());
     // print("USERId..." + widget.cryptoDataList.cryptoId);
     // print("USERId..." + quantitytext.text.trim().toString());
     // print("USERId..." + amountText);
@@ -347,7 +350,8 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
           "gst_rate": newGst.toString(),
           "tds_per": widget.tds.toString(),
           "tds_rate": newTds.toString(),
-          "grand_total": (grandTotal / 100).toString()
+          "grand_total": newTotal.toString()
+          //"grand_total": (grandTotal / 100).toString()
         })
       });
       var response = await dio.post(Consts.BUY_CRYPTOCURRENCY, data: formData);
@@ -369,33 +373,33 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     }
   }
 
-  _handlepaymentSuccess(PaymentSuccessResponse response) {
-    print("Success..." + response.paymentId.toString());
-    setState(() {
-      paymentId = response.paymentId.toString();
-      paymentStatus = "1";
-      _buyNow();
-    });
-    showCustomToast("Success: " + response.paymentId.toString());
-  }
+  // _handlepaymentSuccess(PaymentSuccessResponse response) {
+  //   print("Success..." + response.paymentId.toString());
+  //   setState(() {
+  //     paymentId = response.paymentId.toString();
+  //     paymentStatus = "1";
+  //     _buyNow();
+  //   });
+  //   showCustomToast("Success: " + response.paymentId.toString());
+  // }
 
-  _handlepaymentError(PaymentFailureResponse response) {
-    print("Failure..." + response.code.toString());
-    print("Failure..." + response.message.toString());
-    var message = json.decode(response.message);
-    setState(() {
-      buyEnable = true;
-    });
-    showCustomToast("Failure: " + message["error"]["reason"].toString());
-  }
+  // _handlepaymentError(PaymentFailureResponse response) {
+  //   print("Failure..." + response.code.toString());
+  //   print("Failure..." + response.message.toString());
+  //   var message = json.decode(response.message);
+  //   setState(() {
+  //     buyEnable = true;
+  //   });
+  //   showCustomToast("Failure: " + message["error"]["reason"].toString());
+  // }
 
-  _handleExternalWallet(ExternalWalletResponse response) {
-    print("Wallet..." + response.walletName.toString());
-    showCustomToast("Wallet: " + response.walletName.toString());
-  }
+  // _handleExternalWallet(ExternalWalletResponse response) {
+  //   print("Wallet..." + response.walletName.toString());
+  //   showCustomToast("Wallet: " + response.walletName.toString());
+  // }
 
   _keyGenerate() async {
-    print("Razorpay..." + _razorpay.toString());
+    //print("Razorpay..." + _razorpay.toString());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userPhone = prefs.getString("phone");
     userEmail = prefs.getString("email");
@@ -419,7 +423,7 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
         var responseData = await dio.post(Consts.PAYMENT_KEYS, data: keyData);
         print("responseData in crypto..." + responseData.data.toString());
         if (responseData.data["success"] == 1) {
-          openCheckOut(responseData.data["respData"]["Key_Id"].toString());
+          //openCheckOut(responseData.data["respData"]["Key_Id"].toString());
         }
       }
     } on DioError catch (e) {
@@ -427,48 +431,100 @@ class _CryptoCurrencyListState extends State<CryptoCurrencyList> {
     }
   }
 
-  openCheckOut(String keyString) async {
+  openCheckOut() async {
     print("crpytoName..." + amountText.toString());
+    print("jkjk..." + widget.cryptoDataList.cryptoName.toString());
+    print("gst..." + (widget.gst / 100).toString());
+    print("tds..." + (widget.tds / 100).toString());
     //var price = amountText.split(".");
     // print("crpytoName..." + price.toString());
     // print("crpytoName..." +
     //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString());
 
-    // newGst = double.parse(amountText.toString()) * (widget.gst / 100);
-    // newTds = double.parse(amountText.toString()) * (widget.tds / 100);
-    // newTotal = newGst + newTds + double.parse(amountText.toString());
+    newGst = double.parse(amountText.toString()) * (widget.gst / 100);
+    newTds = double.parse(amountText.toString()) * (widget.tds / 100);
+    //newTotal = newGst + newTds + double.parse(amountText.toString());
+    newTotal = double.parse(amountText.toString());
+    print("crpytoName..." + newTotal.toString());
 
     // print("newGst..." + newGst.toString());
     // print("newTds..." + newTds.toString());
     // print("newTotal..." + newTotal.toString());
 
     //var price = newTotal.toStringAsFixed(2).split(".");
-    var price =
-        double.parse(amountText.toString()).toStringAsFixed(2).split(".");
-    print("newTotal..." + price.toString());
 
-    grandTotal = ((int.parse(price[0]) * 100) + (int.parse(price[1])));
-    print("newTotal..." + grandTotal.toString());
-    var options = {
-      'key': keyString,
-      //'amount': (double.parse(amountText.toString()) * 100).toString(),
-      // 'amount':
-      //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString(),
-      'amount': grandTotal.toString(),
-      'name': widget.cryptoDataList.cryptoName.toString(),
-      'prefill': {
-        'contact': userPhone.toString(),
-        'email': userEmail.toString()
-      },
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-    print("crpytoName..." + options.toString());
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      print(e.toString());
-    }
+    // var price =
+    //     double.parse(amountText.toString()).toStringAsFixed(2).split(".");
+    // print("newTotal..." + price.toString());
+
+    // grandTotal = ((int.parse(price[0]) * 100) + (int.parse(price[1])));
+    // print("newTotal..." + grandTotal.toString());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userPhone = prefs.getString("phone");
+    userEmail = prefs.getString("email");
+    //String amount = amountText.toString();
+    String amount = newTotal.toString();
+    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+    print("amount..." + amount.toString());
+    print("amount..." + orderId.toString());
+    var response = await PayumoneyProUnofficial.payUParams(
+        amount: amount,
+        isProduction: false,
+        productInfo: widget.cryptoDataList.cryptoName.toString(),
+        merchantKey: 'oZ7oo9',
+        userPhoneNumber: userPhone.toString(),
+        transactionId: orderId,
+        firstName: widget.cryptoDataList.cryptoName.toString(),
+        merchantName: 'Kode Core',
+        merchantSalt: 'UkojH5TS',
+        email: userEmail.toString(),
+        hashUrl: '',
+        showLogs: true,
+        showExitConfirmation: true,
+        userCredentials: 'merchantKey:kodecore.payment@gmail.com');
+    print("response..." + response.toString());
+    print("response..." + response['status'].toString());
+    var keyId = json.decode(response['payuResponse']);
+    if (response['status'] == PayUParams.success)
+      handlepaymentSuccess(keyId['id'].toString(), amount);
+    if (response['status'] == PayUParams.failed)
+      handlePaymentFailure(amount, response['message']);
+
+    // var options = {
+    //   'key': keyString,
+    //   //'amount': (double.parse(amountText.toString()) * 100).toString(),
+    //   // 'amount':
+    //   //     (((int.parse(price[0]) * 100) + (int.parse(price[1])))).toString(),
+    //   'amount': grandTotal.toString(),
+    //   'name': widget.cryptoDataList.cryptoName.toString(),
+    //   'prefill': {
+    //     'contact': userPhone.toString(),
+    //     'email': userEmail.toString()
+    //   },
+    //   'external': {
+    //     'wallets': ['paytm']
+    //   }
+    // };
+    // print("crpytoName..." + options.toString());
+    // try {
+    //   _razorpay.open(options);
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+  }
+
+  handlepaymentSuccess(String paymentIdResponse, String amount) {
+    print("Success..." + paymentIdResponse.toString());
+    setState(() {
+      paymentId = paymentIdResponse.toString();
+      paymentStatus = "1";
+      _buyNow();
+    });
+    showCustomToast("Success: " + paymentIdResponse.toString());
+  }
+
+  handlePaymentFailure(String paymentIdResponse, String message) {
+    print("paymentResponseId..." + paymentIdResponse.toString());
+    showCustomToast(message);
   }
 }

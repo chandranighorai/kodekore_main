@@ -27,6 +27,7 @@ class _ItProjectsState extends State<ItProjects> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
   var dio = Dio();
   double gst, tds, royalty;
+  var response;
   Future<ItModel> projectList;
   @override
   void initState() {
@@ -98,6 +99,8 @@ class _ItProjectsState extends State<ItProjects> {
                                       royalty: royalty);
                                 });
                       } else {
+                        // print("Data..." +
+                        //     response[0].data["respData"].length.toString());
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -127,11 +130,12 @@ class _ItProjectsState extends State<ItProjects> {
         }),
         "jsonParam": json.encode({})
       });
-      var response = await Future.wait([
+      response = await Future.wait([
         dio.post(Consts.IT_PROJECT_LIST, data: formData),
         dio.post(Consts.TERMS_CONDITIONS, data: formData1)
       ]);
       print("Data..." + response[0].data.toString());
+      print("Data..." + response[0].data["respData"].length.toString());
       gst = double.parse(response[1].data["respData"]["gst"]);
       tds = double.parse(response[1].data["respData"]["tds"]);
       royalty = double.parse(response[1].data["respData"]["royalty"]);
