@@ -582,19 +582,23 @@ class _ViewDetailsState extends State<ViewDetails> {
     final String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
-        isProduction: false,
+        isProduction: true,
         productInfo: widget.itModelTitle.toString(),
-        merchantKey: 'oZ7oo9',
+        //merchantKey: 'oZ7oo9',
+        merchantKey: 'UZhUeS',
         userPhoneNumber: userphone.toString(),
         transactionId: orderId,
         firstName: widget.itModelTitle.toString(),
         merchantName: 'Kode Core',
-        merchantSalt: 'UkojH5TS',
+        //merchantSalt: 'UkojH5TS',
+        merchantSalt: '6COcY3BwdolyV43pW6BgPC4LE4kMW4Ek',
         email: userEmail.toString(),
         hashUrl: '',
         showLogs: true,
         showExitConfirmation: true,
         userCredentials: 'merchantKey:kodecore.payment@gmail.com');
+    // print("merchantKey...UZhUeS");
+    // print("merchantSaltKey...6COcY3BwdolyV43pW6BgPC4LE4kMW4Ek");
     print("response..." + response.toString());
     print("response..." + response['status'].toString());
     var keyId = json.decode(response['payuResponse']);
@@ -625,7 +629,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   void handlepaymentSuccess(String paymentIdResponse, String amount) {
-    print("Success payment id..." + paymentId.toString());
+    //print("Success payment id..." + paymentId.toString());
     setState(() {
       pageLoad = false;
       paymentStatus = "1";
@@ -674,6 +678,8 @@ class _ViewDetailsState extends State<ViewDetails> {
     print("It Price...0.." + widget.royalty.toString());
     print("It Price...0.." + newRoyalty.toString());
     print("It Price...0.." + newTotal.toString());
+    print("It Price...0.." + userId.toString());
+    print("It Price...0.." + widget.itModelList.toString());
 
     //print("It Price...0.." + (grandTotal / 100).toString());
     try {
@@ -736,7 +742,7 @@ class _ViewDetailsState extends State<ViewDetails> {
       // }));
       var _confirm =
           await dio.post(Consts.USER_BUY_IT_PROJECT, data: boughtProject);
-      print("Confirm It...");
+      print("Confirm It..." + boughtProject.toString());
       print("Confirm It..." + _confirm.data.toString());
       if (_confirm.data["success"] == 1) {
         var buyResponseData = _confirm.data["respData"];

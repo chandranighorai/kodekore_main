@@ -27,6 +27,7 @@ class _ItModelListState extends State<ItModelList> {
   @override
   Widget build(BuildContext context) {
     print("modelDesc..." + widget.itModelList.toString());
+    print("modelDesc..." + widget.itModelList.paymentBreakup.toString());
     return InkWell(
       onTap: () {
         Navigator.push(
