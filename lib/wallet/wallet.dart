@@ -11,7 +11,7 @@ import 'package:kode_core/wallet/cryptocurrencySell.dart';
 import 'package:kode_core/wallet/wal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class Wallet extends StatefulWidget {
   var title;
@@ -23,8 +23,8 @@ class Wallet extends StatefulWidget {
 
 class _WalletState extends State<Wallet> {
   GlobalKey<ScaffoldState> scaffFoldState = GlobalKey<ScaffoldState>();
-  static const platform = const MethodChannel("razorpay_flutter");
-  Razorpay _razorpay;
+  //static const platform = const MethodChannel("razorpay_flutter");
+  //Razorpay _razorpay;
   var dio = Dio();
   var responseData;
   var cryptoData;
@@ -52,10 +52,10 @@ class _WalletState extends State<Wallet> {
     _amountText = new TextEditingController();
     totalAmount = 0.0;
     //_bitCoinText.text = "0.0";
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     _getWallet();
   }
 
@@ -63,7 +63,7 @@ class _WalletState extends State<Wallet> {
   void dispose() {
     super.dispose();
     _bitTimer.cancel();
-    _razorpay.clear();
+    //_razorpay.clear();
   }
 
   @override
@@ -635,26 +635,26 @@ class _WalletState extends State<Wallet> {
     }
   }
 
-  _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success..." + response.paymentId.toString());
-    paymentStatus = "1";
-    paymentId = response.paymentId.toString();
-    _redeemRequest();
-    showCustomToast("Success: " + response.paymentId.toString());
-  }
+  // _handlePaymentSuccess(PaymentSuccessResponse response) {
+  //   print("Success..." + response.paymentId.toString());
+  //   paymentStatus = "1";
+  //   paymentId = response.paymentId.toString();
+  //   _redeemRequest();
+  //   showCustomToast("Success: " + response.paymentId.toString());
+  // }
 
-  _handlePaymentError(PaymentFailureResponse response) {
-    print("Failure..." + response.message.toString());
-    var msg = json.decode(response.message);
-    print("Failure payment id..." + msg["error"]["reason"].toString());
-    showCustomToast("Failure..." + msg["error"]["reason"].toString());
-    //showCustomToast()
-  }
+  // _handlePaymentError(PaymentFailureResponse response) {
+  //   print("Failure..." + response.message.toString());
+  //   var msg = json.decode(response.message);
+  //   print("Failure payment id..." + msg["error"]["reason"].toString());
+  //   showCustomToast("Failure..." + msg["error"]["reason"].toString());
+  //   //showCustomToast()
+  // }
 
-  _handleExternalWallet(ExternalWalletResponse response) {
-    print("Externel payment id..." + response.walletName.toString());
-    showCustomToast("Externel wallet..." + response.walletName.toString());
-  }
+  // _handleExternalWallet(ExternalWalletResponse response) {
+  //   print("Externel payment id..." + response.walletName.toString());
+  //   showCustomToast("Externel wallet..." + response.walletName.toString());
+  // }
 
   openCheckOut(String keyData) async {
     print("keyData,,," + keyData.toString());
@@ -672,7 +672,7 @@ class _WalletState extends State<Wallet> {
       }
     };
     try {
-      _razorpay.open(options);
+      // _razorpay.open(options);
     } catch (e) {
       print(e.toString());
     }

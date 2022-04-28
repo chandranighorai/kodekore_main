@@ -124,13 +124,13 @@ class _ViewDetailsState extends State<ViewDetails> {
                 : Positioned(
                     //top: MediaQuery.of(context).size.width * 0.3,
                     top: MediaQuery.of(context).size.width * 0.4,
-                    //bottom: MediaQuery.of(context).size.width * 0.2,
+                    bottom: MediaQuery.of(context).size.width * 0.02,
                     left: MediaQuery.of(context).size.width * 0.04,
                     right: MediaQuery.of(context).size.width * 0.04,
                     child: Container(
                       padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.width * 0.08,
-                          bottom: MediaQuery.of(context).size.width * 0.08,
+                          top: MediaQuery.of(context).size.width * 0.04,
+                          //bottom: MediaQuery.of(context).size.width * 0.08,
                           left: MediaQuery.of(context).size.width * 0.08,
                           right: MediaQuery.of(context).size.width * 0.08),
                       // height: 145,s
@@ -159,15 +159,15 @@ class _ViewDetailsState extends State<ViewDetails> {
                                 fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.06,
+                            height: MediaQuery.of(context).size.width * 0.02,
                           ),
                           // Text(
                           //     //"4.2.1. Users can choose a suitable investment plan from the multiple plans given by the admin while creating a plan from admin."),
                           //     "${responseData["description"]}"),
-                          widget.itModelDescription.length > 500
+                          widget.itModelDescription.length > 400
                               ? Container(
                                   height:
-                                      MediaQuery.of(context).size.width * 0.6,
+                                      MediaQuery.of(context).size.width * 0.45,
                                   child: ListView(
                                     shrinkWrap: true,
                                     padding: EdgeInsets.all(0),
@@ -324,7 +324,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                   ),
                                 ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.08,
+                            height: MediaQuery.of(context).size.width * 0.06,
                           ),
                           buyBtnShow == false
                               ? SizedBox()
@@ -579,7 +579,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     print("OrderId..." + orderId.toString());
     //print("OrderId..." + key.toString());
     //final String amount = grandTotal.toString();
-    final String amount = newTotal.toString();
+    String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
         isProduction: true,

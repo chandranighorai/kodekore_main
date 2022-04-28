@@ -131,7 +131,7 @@ class _InvestmentViewDetailsState extends State<InvestmentViewDetails> {
                       SizedBox(
                         height: MediaQuery.of(context).size.width * 0.06,
                       ),
-                      widget.invPlanDesc.length > 700
+                      widget.invPlanDesc.length > 600
                           ? Container(
                               height: MediaQuery.of(context).size.width * 0.55,
                               child: ListView(
