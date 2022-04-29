@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
 import 'package:kode_core/home/Home.dart';
 import 'package:kode_core/util/AppColors.dart';
+import 'package:new_version/new_version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Login/login.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -120,6 +121,40 @@ class _MyHomePageState extends State<MyHomePage> {
           message.data.toString());
     });
     _getDetails();
+    _checkVersion(context);
+  }
+
+  void _checkVersion(BuildContext context) async {
+    final newVersion = NewVersion(
+        iOSId: "",
+        //androidId: "com.mobileapp.kode_core"
+        androidId: "com.snapchat.android");
+    final status = await newVersion.getVersionStatus();
+    print("device..." + status.localVersion);
+    print("device..." + status.storeVersion);
+    // existing app version
+    int v1Number = getExtendedVersionNumber(status.localVersion);
+    // playstore app version
+    int v2Number = getExtendedVersionNumber(status.storeVersion);
+    print("device..." + v1Number.toString());
+    print("device..." + v2Number.toString());
+    if (v1Number < v2Number) {
+      newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogTitle: "Update Available",
+          dialogText: "Please update the app from " +
+              "${status.localVersion} " +
+              "to ${status.storeVersion}",
+          dismissButtonText: "Later",
+          updateButtonText: "Update Now",
+          dismissAction: () {
+            //SystemNavigator.pop();
+            Navigator.pop(context);
+          });
+    } else {
+      print("device..." + v2Number.toString());
+    }
   }
 
   @override
@@ -172,5 +207,15 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e.toString());
       showCustomToast("No network");
     }
+  }
+
+  int getExtendedVersionNumber(String version) {
+    List numberlist = version.split(".");
+    print("Numberlist..." + numberlist.toString());
+    print("Numberlist..." + numberlist.runtimeType.toString());
+    numberlist = numberlist.map((i) => int.parse(i)).toList();
+    print("Numberlist..." + numberlist.toString());
+    print("Numberlist..." + numberlist.runtimeType.toString());
+    return numberlist[0] * 100000 + numberlist[1] * 1000 + numberlist[2];
   }
 }
