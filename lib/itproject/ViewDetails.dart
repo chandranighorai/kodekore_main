@@ -582,7 +582,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
-        isProduction: true,
+        isProduction: false,
         productInfo: widget.itModelTitle.toString(),
         //merchantKey: 'oZ7oo9',
         merchantKey: 'UZhUeS',

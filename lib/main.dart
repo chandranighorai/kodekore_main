@@ -127,8 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _checkVersion(BuildContext context) async {
     final newVersion = NewVersion(
         iOSId: "",
-        //androidId: "com.mobileapp.kode_core"
-        androidId: "com.snapchat.android");
+        //androidId: "com.snapchat.android" // for testing
+        androidId: "com.mobileapps.kode_core");
     final status = await newVersion.getVersionStatus();
     print("device..." + status.localVersion);
     print("device..." + status.storeVersion);
@@ -136,8 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
     int v1Number = getExtendedVersionNumber(status.localVersion);
     // playstore app version
     int v2Number = getExtendedVersionNumber(status.storeVersion);
-    print("device..." + v1Number.toString());
-    print("device..." + v2Number.toString());
+    print("device...localVersion..." + v1Number.toString());
+    print("device...storeVersion..." + v2Number.toString());
     if (v1Number < v2Number) {
       newVersion.showUpdateDialog(
           context: context,

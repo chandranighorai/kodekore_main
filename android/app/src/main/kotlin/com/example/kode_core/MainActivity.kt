@@ -1,4 +1,4 @@
-package com.mobileapp.kode_core
+package com.mobileapps.kode_core
 
 import io.flutter.embedding.android.FlutterActivity
 
