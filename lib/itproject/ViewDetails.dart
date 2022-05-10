@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kode_core/Consts/AppConsts.dart';
@@ -582,7 +581,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     String amount = newTotal.toString();
     var response = await PayumoneyProUnofficial.payUParams(
         amount: amount,
-        isProduction: false,
+        isProduction: true,
         productInfo: widget.itModelTitle.toString(),
         //merchantKey: 'oZ7oo9',
         merchantKey: 'UZhUeS',
